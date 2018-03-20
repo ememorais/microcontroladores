@@ -1,5 +1,7 @@
 *.uvguix
 *.uvguix*
 *.uvoptx
+*.~*
+*.scvd
 Listings/
 Objects/
