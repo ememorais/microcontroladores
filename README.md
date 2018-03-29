@@ -9,7 +9,7 @@ Colocar dados pro github saber qual o usuário:
 
 ## Pegar código do github:
 
-cd diretorio\que\os\arquivos\vao\ficar
+`cd diretorio\que\os\arquivos\vao\ficar`
 
 `git clone https://github.com/ememorais/microcontroladores.git`
 
