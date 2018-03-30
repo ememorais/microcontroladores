@@ -1,6 +1,6 @@
 ;------------Constantes------------
-DELAY_SMALL EQU 200
-DELAY_BIG   EQU 2
+DELAY_SMALL EQU 400
+DELAY_BIG   EQU 4
 
 
 
@@ -14,6 +14,8 @@ DELAY_BIG   EQU 2
         IMPORT  PortJ_Input
 		IMPORT  PortK_Output
         IMPORT  PortM_Output
+            
+;TABELA: Pág 24 - http://moodle.utfpr.edu.br/pluginfile.php/412456/mod_resource/content/1/Datasheet_HD44780.pdf
 ;------------LCD_Init------------
 ; Configura o sistema para utilizar o LCD.
 ; Entrada: Nenhum
@@ -21,58 +23,64 @@ DELAY_BIG   EQU 2
 ; Modifica: R0, R1
 LCD_Init
     PUSH {R0, LR}
-	MOV R0, #2_00000000             ;Desabilita comunicação (!RS|!RW|!EN)
-	BL  PortM_Output
     
-	MOV R0, #0x01                   ;Envia dado -> RESET
+    ;Clear display (0 0 0 0 0 0 0 1)
+	MOV R0, #2_00000000             
+	BL  PortM_Output
+	MOV R0, #0x01                   
 	BL  PortK_Output
     MOV R0, #DELAY_SMALL
     BL  SysTick_Wait1us
-	MOV R0, #2_00000100             ;Habilita modo config (!RS|!RW|EN)
+	MOV R0, #2_00000100             
 	BL  PortM_Output
 	MOV R0, #DELAY_BIG
-    BL  SysTick_Wait1ms
-
-	MOV R0, #2_00000000             ;Desabilita comunicação (!RS|!RW|!EN)
+    BL  SysTick_Wait1ms   
+    
+    ;Entry Mode Set (0 0 0 0 0 1 I/D S)
+	MOV R0, #2_00000000             
 	BL  PortM_Output
-	MOV R0, #0x38                   ;Envia dado config -> (CONFIG|8BITS|2LINHAS)
+	MOV R0, #2_00000110                   
 	BL  PortK_Output
-	MOV R0, #2_00000100             ;Habilita modo config (!RS|!RW|EN)
+	MOV R0, #2_00000100
 	BL  PortM_Output
 	MOV R0, #DELAY_SMALL
 	BL  SysTick_Wait1us
     
-;	MOV R0, #2_00000000             
-;	BL  PortM_Output
-;	MOV R0, #0x06                   
-;	BL  PortK_Output
-;	MOV R0, #2_00000100
-;	BL  PortM_Output
-;	MOV R0, #DELAY_SMALL
-;	BL  SysTick_Wait1us
-
-	MOV R0, #2_00000000             ;Desabilita comunicação (!RS|!RW|!EN)
+    ;Function Set (0 0 1 DL N F - - )
+	MOV R0, #2_00000000             
 	BL  PortM_Output
-	MOV R0, #0x0E                   ;Envia dado config cursor -> (DISPLAY|CURSOR|PISCA)
+	MOV R0, #2_00111000                  
 	BL  PortK_Output
-	MOV R0, #2_00000100             ;Habilita modo config (!RS|!RW|EN)
+	MOV R0, #2_00000100             
 	BL  PortM_Output
 	MOV R0, #DELAY_SMALL
 	BL  SysTick_Wait1us
     
-	;MOV R0, #2_00000000
-	;BL  PortM_Output
-	;MOV R0, #0x02
-	;BL  PortK_Output
-	;MOV R0, #2_00000100
-	;BL  PortM_Output
-	;MOV R0, #DELAY_BIG
-	;BL  SysTick_Wait1ms
-	;MOV R0, #2_00000000
-	;BL  PortM_Output
+    ;Display on/off control (0 0 0 0 1 D C B)
+	MOV R0, #2_00000000             
+	BL  PortM_Output
+	MOV R0, #2_00001110             
+	BL  PortK_Output
+	MOV R0, #2_00000100             
+	BL  PortM_Output
+	MOV R0, #DELAY_SMALL
+	BL  SysTick_Wait1us
+    
+    ;Return home (0 0 0 0 0 0 1 -)
+	MOV R0, #2_00000000
+	BL  PortM_Output
+	MOV R0, #2_00000010
+	BL  PortK_Output
+	MOV R0, #2_00000100
+	BL  PortM_Output
+	MOV R0, #DELAY_BIG
+	BL  SysTick_Wait1ms
+	MOV R0, #2_00000000
+	BL  PortM_Output
     
     POP {R0, LR}
     BX LR
+    
     
     ALIGN                        ;Garante que o fim da seção está alinhada 
     END                          ;Fim do arquivo
