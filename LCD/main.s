@@ -13,8 +13,12 @@
 ;<NOME>         EQU <VALOR>
 ; ========================
 ; Definições de Valores
-BIT0	EQU 2_0001
-BIT1	EQU 2_0010
+BIT0	    EQU 2_0001
+BIT1	    EQU 2_0010
+    
+DELAY_SMALL EQU 100
+DELAY_BIG   EQU 4
+   
 
 ; -------------------------------------------------------------------------------
 ; Área de Dados - Declarações de variáveis
@@ -60,7 +64,7 @@ Start
 	BL  PortK_Output
 	MOV R0, #2_00000100
 	BL  PortM_Output
-	MOV R0, #2
+	MOV R0, #DELAY_BIG
 	BL  SysTick_Wait1ms
 	MOV R0, #2_00000000
 	BL  PortM_Output
@@ -68,7 +72,7 @@ Start
 	BL  PortK_Output
 	MOV R0, #2_00000100
 	BL  PortM_Output
-	MOV R0, #50
+	MOV R0, #DELAY_SMALL
 	BL  SysTick_Wait1us
 	MOV R0, #2_00000000
 	BL  PortM_Output
@@ -76,7 +80,7 @@ Start
 	BL  PortK_Output
 	MOV R0, #2_00000100
 	BL  PortM_Output
-	MOV R0, #50
+	MOV R0, #DELAY_SMALL
 	BL  SysTick_Wait1us
 	MOV R0, #2_00000000
 	BL  PortM_Output
@@ -84,7 +88,7 @@ Start
 	BL  PortK_Output
 	MOV R0, #2_00000100
 	BL  PortM_Output
-	MOV R0, #50
+	MOV R0, #DELAY_SMALL
 	BL  SysTick_Wait1us
 	MOV R0, #2_00000000
 	BL  PortM_Output
@@ -92,7 +96,7 @@ Start
 	BL  PortK_Output
 	MOV R0, #2_00000100
 	BL  PortM_Output
-	MOV R0, #2
+	MOV R0, #DELAY_BIG
 	BL  SysTick_Wait1ms
 	MOV R0, #2_00000000
 	BL  PortM_Output
