@@ -16,8 +16,7 @@
 BIT0	    EQU 2_0001
 BIT1	    EQU 2_0010
     
-DELAY_SMALL EQU 100
-DELAY_BIG   EQU 4
+
    
 
 ; -------------------------------------------------------------------------------
@@ -50,6 +49,8 @@ DELAY_BIG   EQU 4
         IMPORT  PortJ_Input
 		IMPORT  PortK_Output
         IMPORT  PortM_Output
+            
+        IMPORT  LCD_Init
 
 
 ; -------------------------------------------------------------------------------
@@ -58,54 +59,19 @@ Start
 	BL PLL_Init                  ;Chama a subrotina para alterar o clock do microcontrolador para 80MHz
 	BL SysTick_Init              ;Chama a subrotina para inicializar o SysTick
 	BL GPIO_Init                 ;Chama a subrotina que inicializa os GPIO
-	MOV R0, #2_00000000
-	BL  PortM_Output
-	MOV R0, #0x01
-	BL  PortK_Output
-	MOV R0, #2_00000100
-	BL  PortM_Output
-	MOV R0, #DELAY_BIG
-	BL  SysTick_Wait1ms
-	MOV R0, #2_00000000
-	BL  PortM_Output
-	MOV R0, #0x38
-	BL  PortK_Output
-	MOV R0, #2_00000100
-	BL  PortM_Output
-	MOV R0, #DELAY_SMALL
-	BL  SysTick_Wait1us
-	MOV R0, #2_00000000
-	BL  PortM_Output
-	MOV R0, #0x06
-	BL  PortK_Output
-	MOV R0, #2_00000100
-	BL  PortM_Output
-	MOV R0, #DELAY_SMALL
-	BL  SysTick_Wait1us
-	MOV R0, #2_00000000
-	BL  PortM_Output
-	MOV R0, #0x0E
-	BL  PortK_Output
-	MOV R0, #2_00000100
-	BL  PortM_Output
-	MOV R0, #DELAY_SMALL
-	BL  SysTick_Wait1us
-	MOV R0, #2_00000000
-	BL  PortM_Output
-	MOV R0, #0x02
-	BL  PortK_Output
-	MOV R0, #2_00000100
-	BL  PortM_Output
-	MOV R0, #DELAY_BIG
-	BL  SysTick_Wait1ms
-	MOV R0, #2_00000000
-	BL  PortM_Output
+    BL LCD_Init                  ;Chama a subrotina que inicializa o LCD
+    MOV R8, #'Q'
+
 	
 MainLoop
 	BL  PortJ_Input				 ;Chama a subrotina que lê o estado das chaves e coloca o resultado em R0
 	CMP R0, #2_00000000			 ;Verifica se a chave está pressionada
 	BNE MainLoop
-	MOV R0, #'A'
+	MOV R0, R8
+    ADD R8, #1
+    CMP R8, #'['
+    IT EQ
+    MOVEQ R8, #'A'
 	BL  PortK_Output
 	MOV R0, #2_00000101
 	BL  PortM_Output
@@ -113,7 +79,7 @@ MainLoop
 	BL  SysTick_Wait1us
 	MOV R0, #2_00000000
 	BL  PortM_Output
-	MOV R0, #1000
+	MOV R0, #300
 	BL  SysTick_Wait1ms
 ; ****************************************
 ; Escrever código que lê o estado da chave, se ela estiver desativada apaga o LED
