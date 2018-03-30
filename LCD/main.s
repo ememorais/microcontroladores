@@ -15,19 +15,24 @@
 ; Definições de Valores
 BIT0	    EQU 2_0001
 BIT1	    EQU 2_0010
-    
+
 
    
 
 ; -------------------------------------------------------------------------------
 ; Área de Dados - Declarações de variáveis
 		AREA  DATA, ALIGN=2
-		; Se alguma variável for chamada em outro arquivo
-		;EXPORT  <var> [DATA,SIZE=<tam>]   ; Permite chamar a variável <var> a 
-		                                   ; partir de outro arquivo
-;<var>	SPACE <tam>                        ; Declara uma variável de nome <var>
-                                           ; de <tam> bytes a partir da primeira 
-                                           ; posição da RAM		
+            
+text1   =  "Marcelo",0
+            
+            
+            
+; Se alguma variável for chamada em outro arquivo
+;EXPORT  <var> [DATA,SIZE=<tam>]            ; Permite chamar a variável <var> a 
+                                            ; partir de outro arquivo
+;<var>	SPACE <tam>                         ; Declara uma variável de nome <var>
+                                            ; de <tam> bytes a partir da primeira 
+                                            ; posição da RAM		
 
 ; -------------------------------------------------------------------------------
 ; Área de Código - Tudo abaixo da diretiva a seguir será armazenado na memória de 
@@ -51,6 +56,8 @@ BIT1	    EQU 2_0010
         IMPORT  PortM_Output
             
         IMPORT  LCD_Init
+		IMPORT  LCD_PushConfig
+        IMPORT  LCD_PushString
 
 
 ; -------------------------------------------------------------------------------
@@ -60,27 +67,44 @@ Start
 	BL SysTick_Init              ;Chama a subrotina para inicializar o SysTick
 	BL GPIO_Init                 ;Chama a subrotina que inicializa os GPIO
     BL LCD_Init                  ;Chama a subrotina que inicializa o LCD
-    MOV R8, #'Q'
+	MOV	 R0, #0
+    BL   LCD_PushString
 
 	
 MainLoop
-	BL  PortJ_Input				 ;Chama a subrotina que lê o estado das chaves e coloca o resultado em R0
+
+	
+	BL 	PortJ_Input				 ;Chama a subrotina que lê o estado das chaves e coloca o resultado em R0
 	CMP R0, #2_00000000			 ;Verifica se a chave está pressionada
 	BNE MainLoop
-	MOV R0, R8
-    ADD R8, #1
-    CMP R8, #'['
-    IT EQ
-    MOVEQ R8, #'A'
-	BL  PortK_Output
-	MOV R0, #2_00000101
-	BL  PortM_Output
-	MOV R0, #50
-	BL  SysTick_Wait1us
-	MOV R0, #2_00000000
-	BL  PortM_Output
-	MOV R0, #300
-	BL  SysTick_Wait1ms
+	
+	MOV R0, #0x80
+	BL	LCD_PushConfig
+	
+	MOV	R0, #1
+    BL  LCD_PushString
+	
+	MOV R0, #0xC0
+	BL	LCD_PushConfig
+	
+	MOV	R0, #2
+    BL  LCD_PushString
+	
+
+	;MOV  R0, R8
+    ;ADD  R8, #1
+    ;CMP  R8, #'['
+    ;IT   EQ
+    ;MOVEQ R8, #'A'
+	;BL   PortK_Output
+	;MOV  R0, #2_00000101
+	;BL   PortM_Output
+	;MOV  R0, #50
+	;BL   SysTick_Wait1us
+	;MOV  R0, #2_00000000
+	;BL   PortM_Output
+	MOV  R0, #300
+	BL   SysTick_Wait1ms
 ; ****************************************
 ; Escrever código que lê o estado da chave, se ela estiver desativada apaga o LED
 ; Se estivar ativada chama a subrotina Pisca_LED
