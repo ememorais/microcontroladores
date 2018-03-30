@@ -22,11 +22,7 @@ BIT1	    EQU 2_0010
 ; -------------------------------------------------------------------------------
 ; Área de Dados - Declarações de variáveis
 		AREA  DATA, ALIGN=2
-            
-text1   =  "Marcelo",0
-            
-            
-            
+			
 ; Se alguma variável for chamada em outro arquivo
 ;EXPORT  <var> [DATA,SIZE=<tam>]            ; Permite chamar a variável <var> a 
                                             ; partir de outro arquivo
@@ -63,65 +59,82 @@ text1   =  "Marcelo",0
 ; -------------------------------------------------------------------------------
 ; Função main()
 Start  		
-	BL PLL_Init                  ;Chama a subrotina para alterar o clock do microcontrolador para 80MHz
-	BL SysTick_Init              ;Chama a subrotina para inicializar o SysTick
-	BL GPIO_Init                 ;Chama a subrotina que inicializa os GPIO
-    BL LCD_Init                  ;Chama a subrotina que inicializa o LCD
-	MOV	 R0, #0
-    BL   LCD_PushString
+	BL PLL_Init          		;Altera o clock do microcontrolador para 80MHz
+	BL SysTick_Init      		;Inicializa o SysTick
+	BL GPIO_Init         		;Inicializa os pinos de GPIO
+    BL LCD_Init          		;Inicializa o LCD
+	
+	BL Display_UTFPR            
+	MOV R12, #1					;Seta a flag de chave como solta (1)
 
 	
 MainLoop
-
+	BL 	PortJ_Input				;Lê o estado da chave SW0 e coloca em R0
+	CMP R0, R12			 		;Se a chave está numa posição diferente da anterior, muda o display
+								;Se a chave está na mesma posição do loop anterior, não faz nada
+	BEQ MainLoop
 	
-	BL 	PortJ_Input				 ;Chama a subrotina que lê o estado das chaves e coloca o resultado em R0
-	CMP R0, #2_00000000			 ;Verifica se a chave está pressionada
-	BNE MainLoop
-	
-	MOV R0, #0x80
-	BL	LCD_PushConfig
-	
-	MOV	R0, #1
-    BL  LCD_PushString
-	
-	MOV R0, #0xC0
-	BL	LCD_PushConfig
-	
-	MOV	R0, #2
-    BL  LCD_PushString
-	
-
-	;MOV  R0, R8
-    ;ADD  R8, #1
-    ;CMP  R8, #'['
-    ;IT   EQ
-    ;MOVEQ R8, #'A'
-	;BL   PortK_Output
-	;MOV  R0, #2_00000101
-	;BL   PortM_Output
-	;MOV  R0, #50
-	;BL   SysTick_Wait1us
-	;MOV  R0, #2_00000000
-	;BL   PortM_Output
+button_Pressed
+	CMP R0, #0                  ;Se a chave está pressionada (0), coloca texto de equipe na tela
+	BNE button_Unpressed
+	BL Display_Equipe
+	MOV R12, #0					;Será trocado por debounce
 	MOV  R0, #300
 	BL   SysTick_Wait1ms
-; ****************************************
-; Escrever código que lê o estado da chave, se ela estiver desativada apaga o LED
-; Se estivar ativada chama a subrotina Pisca_LED
-; ****************************************
+	B MainLoop
+button_Unpressed                ;Se a chave não está apertada, coloca o texto da UTFPR
+	BL Display_UTFPR
+	MOV R12, #1
+	MOV  R0, #300             	;Será trocado por debounce
+	BL   SysTick_Wait1ms
 	B MainLoop
 
-;--------------------------------------------------------------------------------
-; Função Pisca_LED
-; Parâmetro de entrada: Não tem
-; Parâmetro de saída: Não tem
-; ****************************************
-; Escrever função que acende o LED, espera 1 segundo, apaga o LED e espera 1 s
-; Esta função deve chamar a rotina SysTick_Wait1ms com o parâmetro de entrada em R0
-; ****************************************
 
-; -------------------------------------------------------------------------------------------------------------------------
-; Fim do Arquivo
-; -------------------------------------------------------------------------------------------------------------------------	
+
+
+;------------Display_UTFPR------------
+; Entrada: Nenhum
+; Saída: Nenhum
+; Modifica: -- (apenas mudanças temporárias)
+Display_UTFPR
+	PUSH {R0, LR}
+	
+	MOV R0, #0x80              	;Coloca cursor na 1a posição da 1a linha
+	BL	LCD_PushConfig
+	
+	MOV	R0, #0                  ;Manda string [0] para o display
+    BL  LCD_PushString
+	
+	MOV R0, #0xC0               ;Coloca cursor na 1a posição da 2a linha
+	BL	LCD_PushConfig
+	
+	MOV	R0, #1                  ;Manda string [1] para o display
+    BL  LCD_PushString
+
+	POP {R0, LR}
+	BX	LR
+	
+;------------Display_Equipe------------
+; Entrada: Nenhum
+; Saída: Nenhum
+; Modifica: -- (apenas mudanças temporárias)
+Display_Equipe
+	PUSH {R0, LR}
+	
+	MOV R0, #0x80          		;Coloca cursor na 1a posição da 1a linha
+	BL	LCD_PushConfig     		 
+									
+	MOV	R0, #2             		;Manda string [2] para o display
+    BL  LCD_PushString     		 
+									
+	MOV R0, #0xC0          		;Coloca cursor na 1a posição da 2a linha
+	BL	LCD_PushConfig     		 
+									
+	MOV	R0, #3             		;Manda string [3] para o display
+    BL  LCD_PushString
+	
+	POP {R0, LR}
+	BX	LR
+
     ALIGN                        ;Garante que o fim da seção está alinhada 
     END                          ;Fim do arquivo
