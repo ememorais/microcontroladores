@@ -18,12 +18,12 @@ STRING_SIZE EQU 17
         IMPORT  PortJ_Input
         IMPORT  PortK_Output
         IMPORT  PortM_Output
-              ;...-...-...-...-
-line0       = "UTFPR           ",0
-line1       = "2018            ",0
-line2       = "BRUNO E MARCELO ",0
-line3       = "EQUIPE Nº 8     ",0
-lineDefault = "STRING NOT FOUND",0
+              ;...,...,...,..., <-- Strings sempre de 16 caracteres
+line0   = "UTFPR           ",0,\
+          "2018            ",0,\
+          "BRUNO E MARCELO ",0,\
+          "EQUIPE Nº 8     ",0,\
+          "STRING INVÁLIDA ",0
 
         ALIGN
             
@@ -36,7 +36,7 @@ lineDefault = "STRING NOT FOUND",0
 LCD_Init
     PUSH {R0, LR}
     
-    MOV R0, #0x01
+    MOV R0, #2_00000001     ;(0 0 0 0 0 0 0 R)
     BL  LCD_PushConfig
     MOV R0, #DELAY_BIG
     BL  SysTick_Wait1ms
@@ -89,7 +89,7 @@ LCD_PushConfig
 LCD_PushString
 ;------------LCD_PushString------------
     PUSH {R0, R4, R5, R6, LR}
-    MOV R6, #17
+    MOV R6, #STRING_SIZE
     LDR R4, =line0
     MUL R5, R0, R6
     ADD R4, R5
