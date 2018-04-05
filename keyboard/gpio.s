@@ -201,7 +201,7 @@ EsperaGPIO  LDR     R1, [R0]						;Lê da memória o conteúdo do endereço do regis
             
             LDR     R0, =GPIO_PORTD_AHB_DEN_R			;Carrega o endereço do DEN
             LDR     R1, [R0]							;Ler da memória o registrador GPIO_PORTD_AHB_DEN_R
-			MOV     R2, #0xFF
+			MOV     R2, #0x0F
             ORR     R1, R2
             STR     R1, [R0]							;Escreve no registrador da memória funcionalidade digital 
             
@@ -221,10 +221,13 @@ EsperaGPIO  LDR     R1, [R0]						;Lê da memória o conteúdo do endereço do regis
 			LDR     R0, =GPIO_PORTJ_AHB_PUR_R			;Carrega o endereço do PUR para a porta J
 			MOV     R1, #BIT0							;Habilitar funcionalidade digital de resistor de pull-up 
             STR     R1, [R0]							;Escreve no registrador da memória do resistor de pull-up
-			BX      LR
+            
             LDR     R0, =GPIO_PORTD_AHB_PUR_R			;Carrega o endereço do PUR para a porta 
             MOV     R1, #0x0F							;Habilitar funcionalidade digital de resistor de pull-up 
             STR     R1, [R0]							;Escreve no registrador da memória do resistor de pull-up
+
+
+
             BX      LR
 
 ; -------------------------------------------------------------------------------
@@ -242,7 +245,7 @@ PortA_Output
     PUSH {R1}
 	LDR	R1, =GPIO_PORTA_AHB_DATA_BITS_R		;Carrega o valor do offset do data register
 	ADD R1, #0x003C							
-	MOV R0, #2_00001001										
+;	MOV R0, #2_00001001										
 	STR R0, [R1]                            ;Escreve no barramento de dados na porta N1 somente
     POP {R1}
 	BX LR									;Retorno	
@@ -270,8 +273,6 @@ PortJ_Input
     
 PortD_Input
     PUSH {R1}
-    
-
     
 	LDR	R1, =GPIO_PORTD_AHB_DATA_BITS_R		
 	ADD R1, #0x3C
