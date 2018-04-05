@@ -1,6 +1,5 @@
 ;------------Área de Código------------
 ;Tudo abaixo da diretiva a seguir será armazenado na memória de código
-COLUMN_ARRAY_SIZE EQU 4
 
         AREA    |.text|, CODE, READONLY, ALIGN=2
         THUMB
@@ -8,7 +7,7 @@ COLUMN_ARRAY_SIZE EQU 4
         IMPORT  SysTick_Wait1ms
         
         EXPORT  Keyboard_Poll
-        IMPORT  PortA_Output
+        IMPORT  PortM_OutputKeyboard
         IMPORT  PortD_Input
                 
 keyboardArray = 1, 2, 3, 'A',\
@@ -16,7 +15,7 @@ keyboardArray = 1, 2, 3, 'A',\
                 7, 8, 9, 'C',\
                 '*', 0, '#', 'D'
 
-columnArray   = 2_1110, 2_1101, 2_1011, 2_0111
+columnArray   = 2_01110000, 2_01101000, 2_01011000, 2_00111000
                
         ALIGN
  ;------------Keyboard_Poll------------
@@ -26,14 +25,12 @@ Keyboard_Poll
     PUSH    {R0, R1, R2, R3, R4, R5, LR}
     MOV     R5, #0                  ;Coloca o iterador de colunas em 0
     LDR     R1, =columnArray        ;Coloca o endereço do column array em R1
-;    MOV     R2, #COLUMN_ARRAY_SIZE  ;Coloca o tamanho da coluna no R2
     
 keyboard_poll_loop
     LDR     R1, =columnArray        ;Coloca o endereço do column array em R1
-;    MUL     R3, R2, R5              ;Coloca o offset de leitura em R3 (iterador * tamanho do vetor)
     ADD     R1, R5                  ;Avança o endereço original até o offset calculado
     LDRB    R0, [R1]                ;Pega a halfword correspondente do columnArray
-    BL      PortA_Output            ;Escreve na porta para ativar a coluna escolhida
+    BL      PortM_OutputKeyboard    ;Escreve na porta para ativar a coluna escolhida
     
     MOV     R0, #10
     BL      SysTick_Wait1ms         ;Espera 10ms antes de checar as entradas
