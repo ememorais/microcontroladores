@@ -54,6 +54,8 @@ BIT1	    EQU 2_0010
         IMPORT  LCD_Init
 		IMPORT  LCD_PushConfig
         IMPORT  LCD_PushString
+            
+        IMPORT Keyboard_Poll
 
 
 ; -------------------------------------------------------------------------------
@@ -66,13 +68,19 @@ Start
 	
 	BL Display_UTFPR            
 	MOV R12, #1					;Seta a flag de chave como solta (1)
+    
+
 
 	
 MainLoop
+
+    BL Keyboard_Poll
+
 	BL 	PortJ_Input				;Lê o estado da chave SW0 e coloca em R0
 	CMP R0, R12			 		;Se a chave está numa posição diferente da anterior, muda o display
-								;Se a chave está na mesma posição do loop anterior, não faz nada
-	BEQ MainLoop
+	BEQ MainLoop				;Se a chave está na mesma posição do loop anterior, não faz nada                           
+    
+	
 	
 button_Pressed
 	CMP R0, #0                  ;Se a chave está pressionada (0), coloca texto de equipe na tela

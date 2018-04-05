@@ -89,7 +89,8 @@ GPIO_PORTM               	EQU    2_000100000000000
 		EXPORT PortK_Output			; Permite chamar PortN_Output de outro arquivo
 		EXPORT PortM_Output			; Permite chamar PortN_Output de outro arquivo
 		EXPORT PortJ_Input          ; Permite chamar PortJ_Input de outro arquivo
-									
+        EXPORT PortL_Input 
+        EXPORT PortL_Output             
 
 GPIO_Init
 ;=====================
@@ -199,7 +200,7 @@ EsperaGPIO  LDR     R1, [R0]						;Lê da memória o conteúdo do endereço do regis
 
 ; -------------------------------------------------------------------------------
 ; Função PortN_Output
-; Parâmetro de entrada: R1 --> se o BIT1 está ligado ou desligado
+; Parâmetro de entrada: R0
 ; Parâmetro de saída: Não tem
 PortK_Output
 	LDR	R1, =GPIO_PORTK_AHB_DATA_BITS_R		;Carrega o valor do offset do data register
@@ -209,10 +210,12 @@ PortK_Output
 	BX LR									;Retorno
 
 PortL_Output
+    PUSH {R1}
 	LDR	R1, =GPIO_PORTL_AHB_DATA_BITS_R		;Carrega o valor do offset do data register
-	ADD R1, #0x03C0							;Soma ao offset o endereço do bit 1 para ser 
-											;uma escrita amigável
+	ADD R1, #0x03C0							
+											
 	STR R0, [R1]                            ;Escreve no barramento de dados na porta N1 somente
+    POP {R1}
 	BX LR									;Retorno	
 
 
@@ -228,18 +231,24 @@ PortM_Output
 ; Parâmetro de entrada: Não tem
 ; Parâmetro de saída: R0 --> o valor da leitura
 PortJ_Input
+    
 	LDR	R1, =GPIO_PORTJ_AHB_DATA_BITS_R		;Carrega o valor do offset do data register
 	ADD R1, #0x0004							;Soma ao offset o endereço dos bit 0 e 1 para 
 											;serem os únicos a serem lidos tem uma leitura amigável
 	LDR R0, [R1]                            ;Lê no barramento de dados nos pinos J0 e J1 somente
-	BX LR									;Retorno
+	
+    BX LR									;Retorno
     
 PortL_Input
-	LDR	R1, =GPIO_PORTJ_AHB_DATA_BITS_R		;Carrega o valor do offset do data register
-	ADD R1, #0x3C							;Soma ao offset o endereço dos bit 0 e 1 para 
-											;serem os únicos a serem lidos tem uma leitura amigável
-	LDR R0, [R1]                            ;Lê no barramento de dados nos pinos J0 e J1 somente
-	BX LR									;Retorno
+    PUSH {R1}
+    
+	LDR	R1, =GPIO_PORTL_AHB_DATA_BITS_R		
+	ADD R1, #0x3C
+    
+	LDR R0, [R1]
+    
+    POP {R1}    
+	BX LR									
 
 
 
