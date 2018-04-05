@@ -8,8 +8,8 @@ COLUMN_ARRAY_SIZE EQU 4
         IMPORT  SysTick_Wait1ms
         
         EXPORT  Keyboard_Poll
-        IMPORT  PortL_Output
-        IMPORT  PortL_Input
+        IMPORT  PortD_Output
+        IMPORT  PortD_Input
                 
 keyboardArray = 1, 2, 3, 'A',\
                 4, 5, 6, 'B',\
@@ -32,13 +32,13 @@ keyboard_poll_loop
     MUL     R3, R2, R5              ;Coloca o offset de leitura em R3 (iterador * tamanho do vetor)
     ADD     R1, R3                  ;Avança o endereço original até o offset calculado
     LDRB    R0, [R1]                ;Pega a halfword correspondente do columnArray
-    BL      PortL_Output            ;Escreve na porta para ativar a coluna escolhida
+    BL      PortD_Output            ;Escreve na porta para ativar a coluna escolhida
     
     MOV     R0, #10
     BL      SysTick_Wait1ms         ;Espera 10ms antes de checar as entradas
     
     MOV     R0, #0x0F               ;Checa as entradas da porta L
-    BL      PortL_Input 
+    BL      PortD_Input 
     
     ADD     R5, #1                  ;Adiciona 1 ao iterador de colunas
     

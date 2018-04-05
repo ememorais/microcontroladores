@@ -53,18 +53,18 @@ GPIO_PORTK_AHB_PUR_R     	EQU    0x40061510
 GPIO_PORTK_AHB_DATA_R    	EQU    0x400613FC
 GPIO_PORTK_AHB_DATA_BITS_R  EQU    0x40061000
 GPIO_PORTK               	EQU    2_000001000000000
-; PORT L
-GPIO_PORTL_AHB_LOCK_R    	EQU    0x40062520
-GPIO_PORTL_AHB_CR_R      	EQU    0x40062524
-GPIO_PORTL_AHB_AMSEL_R   	EQU    0x40062528
-GPIO_PORTL_AHB_PCTL_R    	EQU    0x4006252C
-GPIO_PORTL_AHB_DIR_R     	EQU    0x40062400
-GPIO_PORTL_AHB_AFSEL_R   	EQU    0x40062420
-GPIO_PORTL_AHB_DEN_R     	EQU    0x4006251C
-GPIO_PORTL_AHB_PUR_R     	EQU    0x40062510	
-GPIO_PORTL_AHB_DATA_R    	EQU    0x400623FC
-GPIO_PORTL_AHB_DATA_BITS_R  EQU    0x40062000
-GPIO_PORTL               	EQU    2_000010000000000
+; PORT D    
+GPIO_PORTD_AHB_LOCK_R    	EQU    0x4005B520
+GPIO_PORTD_AHB_CR_R      	EQU    0x4005B524
+GPIO_PORTD_AHB_AMSEL_R   	EQU    0x4005B528
+GPIO_PORTD_AHB_PCTL_R    	EQU    0x4005B52C
+GPIO_PORTD_AHB_DIR_R     	EQU    0x4005B400
+GPIO_PORTD_AHB_AFSEL_R   	EQU    0x4005B420
+GPIO_PORTD_AHB_DEN_R     	EQU    0x4005B51C
+GPIO_PORTD_AHB_PUR_R     	EQU    0x4005B510	
+GPIO_PORTD_AHB_DATA_R    	EQU    0x4005B3FC
+GPIO_PORTD_AHB_DATA_BITS_R  EQU    0x4005B000
+GPIO_PORTD               	EQU    2_000000000001000
 ; PORT M
 GPIO_PORTM_AHB_LOCK_R    	EQU    0x40063520
 GPIO_PORTM_AHB_CR_R      	EQU    0x40063524
@@ -89,8 +89,8 @@ GPIO_PORTM               	EQU    2_000100000000000
 		EXPORT PortK_Output			; Permite chamar PortN_Output de outro arquivo
 		EXPORT PortM_Output			; Permite chamar PortN_Output de outro arquivo
 		EXPORT PortJ_Input          ; Permite chamar PortJ_Input de outro arquivo
-        EXPORT PortL_Input 
-        EXPORT PortL_Output             
+        EXPORT PortD_Input 
+        EXPORT PortD_Output             
 
 GPIO_Init
 ;=====================
@@ -99,7 +99,7 @@ GPIO_Init
 ; enable clock to GPIOF at clock gating register
             LDR     R0, =SYSCTL_RCGCGPIO_R  		;Carrega o endereço do registrador RCGCGPIO
 			MOV		R1, #GPIO_PORTK                 ;Seta o bit da porta K
-            ORR     R1, #GPIO_PORTL                 ;Seta o bit da porta L, fazendo com OR
+            ORR     R1, #GPIO_PORTD                 ;Seta o bit da porta L, fazendo com OR
 			ORR     R1, #GPIO_PORTM					;Seta o bit da porta M, fazendo com OR
 			ORR 	R1, #GPIO_PORTJ                 ;Seta o bit da porta J, fazendo com OR 
             STR     R1, [R0]						;Move para a memória os bits das portas no endereço do RCGCGPIO
@@ -107,7 +107,7 @@ GPIO_Init
             LDR     R0, =SYSCTL_PRGPIO_R			;Carrega o endereço do PRGPIO para esperar os GPIO ficarem prontos
 EsperaGPIO  LDR     R1, [R0]						;Lê da memória o conteúdo do endereço do registrador
 			MOV     R2, #GPIO_PORTK                 ;Seta os bits correspondentes às portas para fazer a comparação
-            ORR 	R2, #GPIO_PORTL
+            ORR 	R2, #GPIO_PORTD
 			ORR     R2, #GPIO_PORTM                 
 			ORR 	R2, #GPIO_PORTJ
             TST     R1, R2							;Testa o R1 com R2 fazendo R1 & R2
@@ -121,9 +121,9 @@ EsperaGPIO  LDR     R1, [R0]						;Lê da memória o conteúdo do endereço do regis
             STR     R1, [R0]						;Guarda no registrador AMSEL da porta J da memória
             LDR     R0, =GPIO_PORTK_AHB_AMSEL_R     
             STR     R1, [R0]						
-            LDR     R0, =GPIO_PORTL_AHB_AMSEL_R		
+            LDR     R0, =GPIO_PORTD_AHB_AMSEL_R		
             STR     R1, [R0]	
-            LDR     R0, =GPIO_PORTM_AHB_AMSEL_R		
+            LDR     R0, =GPIO_PORTD_AHB_AMSEL_R		
             STR     R1, [R0]	            
  
 ; 4. Limpar PCTL para selecionar o GPIO
@@ -132,7 +132,7 @@ EsperaGPIO  LDR     R1, [R0]						;Lê da memória o conteúdo do endereço do regis
             STR     R1, [R0]                        ;Guarda no registrador PCTL da porta J da memória
             LDR     R0, =GPIO_PORTK_AHB_PCTL_R		
             STR     R1, [R0]                        
-            LDR     R0, =GPIO_PORTL_AHB_PCTL_R      
+            LDR     R0, =GPIO_PORTD_AHB_PCTL_R      
             STR     R1, [R0]                        
             LDR     R0, =GPIO_PORTM_AHB_PCTL_R      
             STR     R1, [R0]
@@ -145,7 +145,7 @@ EsperaGPIO  LDR     R1, [R0]						;Lê da memória o conteúdo do endereço do regis
 			MOV     R1, #0xFF						
             STR     R1, [R0]						
 			; O certo era verificar os outros bits da PJ para não transformar entradas em saídas desnecessárias
-            LDR     R0, =GPIO_PORTL_AHB_DIR_R		
+            LDR     R0, =GPIO_PORTD_AHB_DIR_R		
             MOV     R1, #0xF0               		;Entradas: L0 L1 L2 L3 // Saídas: L4 L5 L6 L7
             STR     R1, [R0]						
             LDR     R0, =GPIO_PORTM_AHB_DIR_R		
@@ -158,7 +158,7 @@ EsperaGPIO  LDR     R1, [R0]						;Lê da memória o conteúdo do endereço do regis
             STR     R1, [R0]						
             LDR     R0, =GPIO_PORTK_AHB_AFSEL_R		
             STR     R1, [R0]	
-            LDR     R0, =GPIO_PORTL_AHB_AFSEL_R		
+            LDR     R0, =GPIO_PORTD_AHB_AFSEL_R		
             STR     R1, [R0]	            
             LDR     R0, =GPIO_PORTM_AHB_AFSEL_R     
             STR     R1, [R0]
@@ -176,8 +176,8 @@ EsperaGPIO  LDR     R1, [R0]						;Lê da memória o conteúdo do endereço do regis
             ORR     R1, R2
             STR     R1, [R0]							;Escreve no registrador da memória funcionalidade digital 
             
-            LDR     R0, =GPIO_PORTL_AHB_DEN_R			;Carrega o endereço do DEN
-            LDR     R1, [R0]							;Ler da memória o registrador GPIO_PORTL_AHB_DEN_R
+            LDR     R0, =GPIO_PORTD_AHB_DEN_R			;Carrega o endereço do DEN
+            LDR     R1, [R0]							;Ler da memória o registrador GPIO_PORTD_AHB_DEN_R
 			MOV     R2, #0xFF
             ORR     R1, R2
             STR     R1, [R0]							;Escreve no registrador da memória funcionalidade digital 
@@ -193,7 +193,7 @@ EsperaGPIO  LDR     R1, [R0]						;Lê da memória o conteúdo do endereço do regis
 			MOV     R1, #BIT0							;Habilitar funcionalidade digital de resistor de pull-up 
             STR     R1, [R0]							;Escreve no registrador da memória do resistor de pull-up
 			BX      LR
-            LDR     R0, =GPIO_PORTL_AHB_PUR_R			;Carrega o endereço do PUR para a porta 
+            LDR     R0, =GPIO_PORTD_AHB_PUR_R			;Carrega o endereço do PUR para a porta 
             MOV     R1, #0x0F							;Habilitar funcionalidade digital de resistor de pull-up 
             STR     R1, [R0]							;Escreve no registrador da memória do resistor de pull-up
             BX      LR
@@ -209,9 +209,9 @@ PortK_Output
 	STR R0, [R1]                            ;Escreve no barramento de dados na porta N1 somente
 	BX LR									;Retorno
 
-PortL_Output
+PortD_Output
     PUSH {R1}
-	LDR	R1, =GPIO_PORTL_AHB_DATA_BITS_R		;Carrega o valor do offset do data register
+	LDR	R1, =GPIO_PORTD_AHB_DATA_BITS_R		;Carrega o valor do offset do data register
 	ADD R1, #0x03C0							
 											
 	STR R0, [R1]                            ;Escreve no barramento de dados na porta N1 somente
@@ -239,10 +239,10 @@ PortJ_Input
 	
     BX LR									;Retorno
     
-PortL_Input
+PortD_Input
     PUSH {R1}
     
-	LDR	R1, =GPIO_PORTL_AHB_DATA_BITS_R		
+	LDR	R1, =GPIO_PORTD_AHB_DATA_BITS_R		
 	ADD R1, #0x3C
     
 	LDR R0, [R1]
