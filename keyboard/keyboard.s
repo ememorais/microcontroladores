@@ -50,7 +50,7 @@ keyboard_poll_loop
     SUB     R0, #1                  ;Converte em zero-indexed
     MUL     R0, R0, R7              ;Avança linhas
     ADD     R0, R5                  ;Avança colunas
-    B       keyboard_poll_exit      ;Para detecção se algo foi detectado
+    B       keyboard_getChar        ;Para detecção se algo foi detectado
     
 keyboard_undetected
     ADD     R5, #1                  ;colunas++
@@ -61,9 +61,15 @@ keyboard_undetected
 
 keyboard_poll_no_result
     MOV     R0, #0xFF               ;Coloca 0xFF se nada foi detectado
+    
 keyboard_poll_exit    
     POP     {R1, R2, R3, R4, R5, R6, R7, R8, LR}
     BX      LR
+keyboard_getChar
+    LDR     R1, =keyboardArray          ;Endereço do vetor de caracteres do teclado          
+    ADD     R1, R0                      ;Coloca o valor calculado como offset de bytes no endereço
+    LDRB    R0, [R1]                    ;Coloca o byte escolhido em R0
+    B keyboard_poll_exit
     
     
     
