@@ -78,7 +78,7 @@ Start
 	
 MainLoop
     BL Keyboard_Poll
-	BL Tabuada                      
+	BL Tabuada                       
     B  MainLoop
 	
 	

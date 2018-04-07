@@ -61,8 +61,16 @@ Print_Tabuada						;Realiza as contas e imprime na tela
 	PUSH  {R0}
 	MOV   R0, #5					;Passa R0 como parametro para LCD_PushString, chamando a sexta string
 	BL	  LCD_PushString
+	POP   {R0}
+	PUSH  {R0}
 	ADD   R0, #48					;Adiciona 48 ao valor pressionado do teclado
+    PUSH  {R0}
+	MOV   R0, #0x8D          		;COloca o cursor no final da 1a linha
+	BL	  LCD_PushConfig
+	POP   {R0}
 	BL    LCD_PushChar				;Imprime valor do teclado
+	POP   {R0}
+	PUSH  {R0}
 	MOV   R0, #0xC0          		;Coloca cursor na 1a posição da 2a linha
 	BL	  LCD_PushConfig
 	POP   {R0}
@@ -116,3 +124,13 @@ end_tabuada
     NOP
     ALIGN
     END
+    
+    
+    
+    
+    
+   
+
+
+
+    

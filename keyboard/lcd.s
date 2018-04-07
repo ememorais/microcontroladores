@@ -25,8 +25,7 @@ stringArray =   "UTFPR           "      ,0,\
                 "BRUNO E MARCELO "      ,0,\
                 "EQUIPE N",223," 8     ",0,\
                 "STRING INVÁLIDA "      ,0,\
-                "TABUADA N",223,"       ",0
-                
+				"TABUADA DO N",223,"   " ,0                
 
         ALIGN
             
@@ -118,7 +117,7 @@ stringCopy_end
 ; Saída: Nenhum
 ; Modifica: -- (apenas mudanças temporárias)
 LCD_PushChar
-    PUSH {R0, R2, LR}
+    PUSH {R0, R2, R3, LR}
     MOV R2, R0
     MOV R0, #2_00000000
     BL  PortM_Output
@@ -130,7 +129,7 @@ LCD_PushChar
     BL  SysTick_Wait1us
     MOV R0, #2_00000000
     BL  PortM_Output
-    POP {R0, R2, LR}
+    POP {R0, R2, R3, LR}
     BX  LR
 
     

@@ -75,15 +75,4 @@ keyboard_getChar
     
     ALIGN
     END
-    
-    
-    
-    
-    
-   
-
-
-
-    
-    
-    
+ 
