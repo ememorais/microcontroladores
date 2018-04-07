@@ -101,6 +101,7 @@ GPIO_PORTM               	EQU    2_000100000000000
 		EXPORT PortK_Output			; Permite chamar PortN_Output de outro arquivo
 		EXPORT PortM_Output			; Permite chamar PortN_Output de outro arquivo
         EXPORT PortM_OutputKeyboard
+        EXPORT PortM_OutputRelay
 		EXPORT PortJ_Input          ; Permite chamar PortJ_Input de outro arquivo
         EXPORT PortD_Input        
 
@@ -161,7 +162,7 @@ EsperaGPIO  LDR     R1, [R0]						;Lê da memória o conteúdo do endereço do regis
             MOV     R1, #0x00               		;Entradas: D0 D1 D2 D3
             STR     R1, [R0]	            
             LDR     R0, =GPIO_PORTM_AHB_DIR_R		
-            MOV     R1, #0x7F               		
+            MOV     R1, #0xFF               		
             STR     R1, [R0]						
 ; 6. Limpar os bits AFSEL para 0 para selecionar GPIO 
 ;    Sem função alternativa
@@ -197,7 +198,7 @@ EsperaGPIO  LDR     R1, [R0]						;Lê da memória o conteúdo do endereço do regis
  
             LDR     R0, =GPIO_PORTM_AHB_DEN_R			;Carrega o endereço do DEN
             LDR     R1, [R0]                            ;Ler da memória o registrador GPIO_PORTN_AHB_DEN_R
-			MOV     R2, #0x7F                           
+			MOV     R2, #0xFF                           
             ORR     R1, R2                              
             STR     R1, [R0]                            ;Escreve no registrador da memória funcionalidade digital
 			
@@ -227,6 +228,14 @@ PortM_OutputKeyboard
     PUSH {R1}
 	LDR	R1, =GPIO_PORTM_AHB_DATA_BITS_R		;Carrega o valor do offset do data register
 	ADD R1, #0x1E0															
+	STR R0, [R1]                            ;Escreve no barramento de dados na porta N1 somente
+    POP {R1}
+	BX LR									;Retorno	
+    
+PortM_OutputRelay
+    PUSH {R1}
+	LDR	R1, =GPIO_PORTM_AHB_DATA_BITS_R		;Carrega o valor do offset do data register
+	ADD R1, #0x200															
 	STR R0, [R1]                            ;Escreve no barramento de dados na porta N1 somente
     POP {R1}
 	BX LR									;Retorno	

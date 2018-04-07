@@ -15,7 +15,7 @@
 ; Definições de Valores
 BIT0	    EQU 2_0001
 BIT1	    EQU 2_0010
-
+END_POS 	EQU 0x2000004B
 
    
 
@@ -50,6 +50,7 @@ BIT1	    EQU 2_0010
         IMPORT  PortJ_Input
 		IMPORT  PortK_Output
         IMPORT  PortM_Output
+        IMPORT PortM_OutputRelay
             
         IMPORT  LCD_Init
 		IMPORT  LCD_PushConfig
@@ -72,33 +73,40 @@ Start
 	BL Init_Memo          		
 	BL Display_UTFPR            
 	MOV R12, #1					;Seta a flag de chave como solta (1)
-    
 
 
 	
 MainLoop
     BL Keyboard_Poll
-	BL Tabuada                       
+	BL Tabuada
+    BL Relay_Check
     B  MainLoop
+    
+    
+    
+    
+Relay_Check
+    PUSH {R0, R1, R2, LR}
+    LDR  R0, =END_POS           ;Endereço END_POS
+    LDR  R1, [R0]               ;Endereço ultimo valor usado
+    LDRB R2, [R1]               ;Ultimo valor usado
+    CMP  R2, #11                ;Se for 10 ativa relé
+    BNE  relay_end
 	
-	
-button_Pressed
-	CMP R0, #0                  ;Se a chave está pressionada (0), coloca texto de equipe na tela
-	BNE button_Unpressed
-	BL Display_Equipe
-	MOV R12, #0					;Será trocado por debounce
-	MOV  R0, #300
-	BL   SysTick_Wait1ms
-	B MainLoop
-button_Unpressed                ;Se a chave não está apertada, coloca o texto da UTFPR
-	BL Display_UTFPR
-	MOV R12, #1
-	MOV  R0, #300             	;Será trocado por debounce
-	BL   SysTick_Wait1ms
-	B MainLoop
+relay_activate	
+    MOV R0, #0x80
+    BL PortM_OutputRelay
+    MOV R0, #3000
+    PUSH {R1, R2, R3}
+    BL SysTick_Wait1ms
+    POP {R1, R2, R3}
+    MOV R0, #0
+    BL  PortM_OutputRelay
+    STR R0, [R1]
 
-
-
+relay_end
+    POP {R0, R1, R2, LR}
+    BX  LR
 
 ;------------Display_UTFPR------------
 ; Entrada: Nenhum

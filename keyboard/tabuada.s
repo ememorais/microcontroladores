@@ -44,10 +44,10 @@ Add_One								;Soma um ao valor do multiplicador da tabuada atual
 	LDR    R0, =END_POS
 	LDR    R1, [R0]
 	LDRB   R2, [R1]					;Pega valor do multiplicador da tabuada atual
-	CMP    R2, #10					;Compara se esse valor já é igual a 10
-	ITT    LT
-	ADDLT  R2, #1					;Soma 1 caso seja diferente
-	STRBLT R2, [R1]					;Guarda na memória 
+	CMP    R2, #11					;Compara se esse valor já é igual a 10
+	ITT    LE
+	ADDLE  R2, #1					;Soma 1 caso seja diferente
+	STRBLE R2, [R1]					;Guarda na memória 
 	POP    {LR,R0,R1,R2}
 	BX     LR
 
