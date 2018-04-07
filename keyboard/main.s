@@ -54,8 +54,12 @@ BIT1	    EQU 2_0010
         IMPORT  LCD_Init
 		IMPORT  LCD_PushConfig
         IMPORT  LCD_PushString
+		IMPORT  LCD_PushChar
             
         IMPORT Keyboard_Poll
+		
+		IMPORT Tabuada
+		IMPORT Init_Memo
 
 
 ; -------------------------------------------------------------------------------
@@ -65,7 +69,7 @@ Start
 	BL SysTick_Init      		;Inicializa o SysTick
 	BL GPIO_Init         		;Inicializa os pinos de GPIO
     BL LCD_Init          		;Inicializa o LCD
-	
+	BL Init_Memo          		
 	BL Display_UTFPR            
 	MOV R12, #1					;Seta a flag de chave como solta (1)
     
@@ -73,13 +77,9 @@ Start
 
 	
 MainLoop
-
     BL Keyboard_Poll
-
-	BL 	PortJ_Input				;Lê o estado da chave SW0 e coloca em R0
-	CMP R0, R12			 		;Se a chave está numa posição diferente da anterior, muda o display
-	BEQ MainLoop				;Se a chave está na mesma posição do loop anterior, não faz nada                           
-    
+	BL Tabuada                      
+    B  MainLoop
 	
 	
 button_Pressed

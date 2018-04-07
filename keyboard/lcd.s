@@ -12,6 +12,7 @@ STRING_SIZE EQU 17
         EXPORT  LCD_Init
         EXPORT  LCD_PushConfig
         EXPORT  LCD_PushString
+		EXPORT  LCD_PushChar
          
         IMPORT  SysTick_Wait1ms
         IMPORT  SysTick_Wait1us
@@ -23,8 +24,9 @@ stringArray =   "UTFPR           "      ,0,\
                 "2018            "      ,0,\
                 "BRUNO E MARCELO "      ,0,\
                 "EQUIPE N",223," 8     ",0,\
-                "STRING INVÁLIDA "      ,0   
-               
+                "STRING INVÁLIDA "      ,0,\
+                "TABUADA N",223,"       ",0
+                
 
         ALIGN
             

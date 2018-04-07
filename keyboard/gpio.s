@@ -210,8 +210,6 @@ EsperaGPIO  LDR     R1, [R0]						;Lê da memória o conteúdo do endereço do regis
             MOV     R1, #0x0F							;Habilitar funcionalidade digital de resistor de pull-up 
             STR     R1, [R0]							;Escreve no registrador da memória do resistor de pull-up
 
-
-
             BX      LR
 
 ; -------------------------------------------------------------------------------
