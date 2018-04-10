@@ -7,7 +7,7 @@ GPTMTAILR0  EQU    0x40030028
     
         AREA    |.text|, CODE, READONLY, ALIGN=2
             
-            
+;Teste git            
 Timer_Init
     LDR     R0, =RCGCTIMER
     MOV     R1, R0
