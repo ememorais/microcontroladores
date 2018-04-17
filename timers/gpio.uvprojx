@@ -22,7 +22,7 @@
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
           <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0TM4C129_1024 -FS00 -FL0100000 -FP0($$Device:TM4C1294NCPDT$Flash\TM4C129_1024.FLM))</FlashDriverDll>
-          <DeviceId>0</DeviceId>
+          <DeviceId>7088</DeviceId>
           <RegisterFile>$$Device:TM4C1294NCPDT$Device\Include\TM4C129\TM4C129.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
@@ -30,7 +30,7 @@
           <Linker></Linker>
           <OHString></OHString>
           <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
+          <SLE66CMisc>-DTM4C1294NCPDT</SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
           <SFDFile>$$Device:TM4C1294NCPDT$SVD\TM4C129\TM4C1294NCPDT.svd</SFDFile>
@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Objects\</OutputDirectory>
-          <OutputName>LCD</OutputName>
+          <OutputName>gpio</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -110,11 +110,11 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments>  -MPU</SimDllArguments>
+          <SimDllArguments>-MPU</SimDllArguments>
           <SimDlgDll>DCM.DLL</SimDlgDll>
           <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments> -MPU</TargetDllArguments>
+          <TargetDllArguments>-MPU</TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM4</TargetDlgDllArguments>
         </DllOption>
@@ -381,9 +381,9 @@
           <GroupName>Source Group 1</GroupName>
           <Files>
             <File>
-              <FileName>gpio.s</FileName>
+              <FileName>startup.s</FileName>
               <FileType>2</FileType>
-              <FilePath>.\gpio.s</FilePath>
+              <FilePath>.\startup.s</FilePath>
             </File>
             <File>
               <FileName>main.s</FileName>
@@ -391,24 +391,14 @@
               <FilePath>.\main.s</FilePath>
             </File>
             <File>
-              <FileName>startup.s</FileName>
+              <FileName>gpio.s</FileName>
               <FileType>2</FileType>
-              <FilePath>.\startup.s</FilePath>
+              <FilePath>.\gpio.s</FilePath>
             </File>
             <File>
-              <FileName>utils.s</FileName>
+              <FileName>my_timer.s</FileName>
               <FileType>2</FileType>
-              <FilePath>.\utils.s</FilePath>
-            </File>
-            <File>
-              <FileName>lcd.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\lcd.s</FilePath>
-            </File>
-            <File>
-              <FileName>timers.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\timers.s</FilePath>
+              <FilePath>.\my_timer.s</FilePath>
             </File>
           </Files>
         </Group>
