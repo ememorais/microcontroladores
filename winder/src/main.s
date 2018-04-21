@@ -58,9 +58,11 @@ END_POS 	EQU 0x2000004B
 		IMPORT  LCD_PushChar
             
         IMPORT Keyboard_Poll
-		
-		IMPORT Tabuada
-		IMPORT Init_Memo
+            
+        IMPORT Display_QueryRotation
+	
+            
+            
 
 
 ; -------------------------------------------------------------------------------
@@ -69,9 +71,8 @@ Start
 	BL PLL_Init          		;Altera o clock do microcontrolador para 80MHz
 	BL SysTick_Init      		;Inicializa o SysTick
 	BL GPIO_Init         		;Inicializa os pinos de GPIO
-    BL LCD_Init          		;Inicializa o LCD
-	BL Init_Memo          		
-	BL Display_UTFPR            
+    BL LCD_Init          		;Inicializa o LCD     		
+	BL Display_QueryRotation    
 	
 MainLoop
     BL Keyboard_Poll

@@ -22,10 +22,9 @@ STRING_SIZE EQU 17
                 ;Strings sempre de 16 caracteres
 stringArray =   "UTFPR           "      ,0,\
                 "2018            "      ,0,\
-                "BRUNO E MARCELO "      ,0,\
-                "EQUIPE N",223," 8     ",0,\
-                "STRING INVÁLIDA "      ,0,\
-				"TABUADA DO N",223,"   " ,0                
+                "N",223," DE VOLTAS:   ",0,\
+                "DIRECAO: <-1  0->"     ,0,\
+                "VELOC. <<<0  <1"       ,0
 
         ALIGN
             
