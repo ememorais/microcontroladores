@@ -58,8 +58,10 @@ END_POS 	EQU 0x2000004B
 		IMPORT  LCD_PushChar
             
         IMPORT Keyboard_Poll
+         
+        IMPORT Winder_Init      
+        IMPORT Winder_Query
             
-        IMPORT Display_QueryRotation
 	
             
             
@@ -72,7 +74,8 @@ Start
 	BL SysTick_Init      		;Inicializa o SysTick
 	BL GPIO_Init         		;Inicializa os pinos de GPIO
     BL LCD_Init          		;Inicializa o LCD     		
-	BL Display_QueryRotation    
+	BL Winder_Init 
+    BL Winder_Query
 	
 MainLoop
     BL Keyboard_Poll
