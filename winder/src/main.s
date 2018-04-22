@@ -75,10 +75,11 @@ Start
 	BL GPIO_Init         		;Inicializa os pinos de GPIO
     BL LCD_Init          		;Inicializa o LCD     		
 	BL Winder_Init 
-    BL Winder_Query
 	
 MainLoop
-    BL Keyboard_Poll
+    MOV   R0, #100
+	BL    SysTick_Wait1ms
+    BL Winder_Query
     B  MainLoop
 
 

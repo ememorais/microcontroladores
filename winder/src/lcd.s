@@ -13,6 +13,7 @@ STRING_SIZE EQU 17
         EXPORT  LCD_PushConfig
         EXPORT  LCD_PushString
 		EXPORT  LCD_PushChar
+        EXPORT  LCD_ClearLine_2
          
         IMPORT  SysTick_Wait1ms
         IMPORT  SysTick_Wait1us
@@ -21,10 +22,11 @@ STRING_SIZE EQU 17
         IMPORT  PortM_Output
                 ;Strings sempre de 16 caracteres
 stringArray =   "UTFPR           "      ,0,\
-                "2018            "      ,0,\
+                "                "      ,0,\
                 "N",223," DE VOLTAS:   ",0,\
-                "DIRECAO: <-1  0->"     ,0,\
-                "VELOC. <<<0  <1"       ,0
+                "DIRECAO: <-1 0->"     ,0,\
+                "VELOC. 0>>>>  1>"       ,0,\
+                "VALOR INVÁLIDO  "
 
         ALIGN
             
@@ -130,6 +132,18 @@ LCD_PushChar
     BL  PortM_Output
     POP {R0, R2, R3, LR}
     BX  LR
+    
+LCD_ClearLine_2
+    PUSH {R0, LR}
+	
+	MOV R0, #0xC0               ;Coloca cursor na 1a posição da 2a linha
+	BL	LCD_PushConfig
+	
+	MOV	R0, #1                  ;Manda string [1] para o display
+    BL  LCD_PushString
+
+	POP {R0, LR}
+	BX	LR
 
     
     ALIGN                        ;Garante que o fim da seção está alinhada 

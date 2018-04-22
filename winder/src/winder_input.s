@@ -1,9 +1,12 @@
         AREA    |.text|, CODE, READONLY, ALIGN=2
         THUMB
             
+        IMPORT  Keyboard_Poll
+            
         IMPORT  LCD_PushConfig
         IMPORT  LCD_PushString
         IMPORT  LCD_PushChar
+        IMPORT LCD_ClearLine_2
             
         EXPORT  Winder_Query
         EXPORT  Winder_Init
@@ -11,24 +14,43 @@
         ALIGN
 
 
+DATA_ROTATIONS      EQU 0x20000500
+DATA_DIRECTION      EQU 0x20000504
+DATA_SPEED          EQU 0x20000508
+
 STRING_FLAG 	    EQU 0x20001000
 LAST_STRING_FLAG    EQU 0x20001004
 INPUT_FLAG          EQU 0x20001008
 LAST_INPUT_FLAG     EQU 0x20001008
+POLL_FLAG           EQU 0x2000100C
+    
     
 Winder_Init
     MOV     R1, #0xFF
     LDR     R0, =LAST_STRING_FLAG
     STR     R1, [R0]
+    
     MOV     R1, #0x00
     LDR     R0, =STRING_FLAG
+    STR     R1, [R0]
+    
+    MOV     R1, #0x00
+    LDR     R0, =LAST_INPUT_FLAG
+    STR     R1, [R0]
+    
+    MOV     R1, #0x00
+    LDR     R0, =INPUT_FLAG
+    STR     R1, [R0]
+    
+    MOV     R1, #0x00
+    LDR     R0, =POLL_FLAG
     STR     R1, [R0]
     BX      LR
 
     
 
 Winder_Query
-    PUSH    {R0, R1, R2, LR}
+    PUSH    {R0, R1, R2, R3, LR}
 
     ;Se a flag de string atual é diferente da anterior, atualiza
     ;a string no LCD de acordo com a flag
@@ -66,10 +88,77 @@ winder_string_speed
   
     
 winder_button_input
+    LDR     R0, =INPUT_FLAG        ;Carrega valor atual da flag input em R1
+    LDR     R1, [R0]    
 
+    BL      Keyboard_Poll          ;Coloca em R0 resultado do teclado e ignora se for 0xFF (sem pressionamento)
+    CMP     R0, #0xFF
+    BEQ     winder_end
+    
+    CMP     R0, #'#'               ;Caso detecte pressionamento de #, pula direto para confirmação
+    IT      EQ
+    MOVEQ   R1, #2
+    
+winder_button_lsd
+    CMP     R1, #0x00
+    BNE     winder_button_msd
+    
+    LDR     R2, =DATA_ROTATIONS    ;Coloca o valor lido na memoria
+    STR     R0, [R2]
+    
+    ADD     R0, #48                ;Coloca o valor lido no LCD
+    BL      LCD_PushChar
+    
+    LDR     R2, =INPUT_FLAG        ;Passa flag de input para próxima posição
+    MOV     R0, #1
+    STR     R0, [R2]
+    B       winder_end
+
+winder_button_msd
+    CMP     R1, #0x01
+    BNE     winder_button_confirm
+     
+    PUSH    {R0}
+    
+    LDR     R2, =DATA_ROTATIONS    ;Multiplica o valor na memória por 10 e soma o valor lido agora
+    LDR     R0, [R2]
+    
+    MOV     R1, #10
+    MUL     R0, R1
+    
+    MOV     R1, R0
+    POP     {R0}
+    ADD     R1, R0
+    
+    STR     R0, [R2]
+    
+    ADD     R0, #48                ;Coloca o valor lido no LCD
+    BL      LCD_PushChar
+    
+    LDR     R2, =INPUT_FLAG        ;Passa flag de input para próxima posição
+    MOV     R0, #2
+    STR     R0, [R2]
+    B       winder_end
+
+winder_button_confirm
+    CMP R0, #'#'
+    BNE winder_end
+    
+    LDR     R2, =STRING_FLAG        ;Passa flag de string para próxima posição
+    LDR     R0, [R2]
+    ADD     R0, #1
+    STR     R0, [R2]
+    
+    LDR     R2, =INPUT_FLAG        ;Reseta a flag de input
+    MOV     R0, #0
+    STR     R0, [R2]
+    
+    BL      LCD_ClearLine_2         ;Limpa 2a linha do LCD
+    
+    
 
 winder_end
-    POP     {R0, R1, R2, LR}
+    POP     {R0, R1, R2, R3, LR}
     BX LR
 
 Display_Query
