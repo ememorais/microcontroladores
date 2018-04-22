@@ -24,9 +24,10 @@ STRING_SIZE EQU 17
 stringArray =   "UTFPR           "      ,0,\
                 "                "      ,0,\
                 "N",223," DE VOLTAS:   ",0,\
-                "DIRECAO: <-1 0->"     ,0,\
-                "VELOC. 0>>>>  1>"       ,0,\
-                "VALOR INVÁLIDO  "
+                "DIRECAO: <-1 0->"      ,0,\
+                "VELOC. 0>>>>  1>"      ,0,\
+                "EXECUTANDO (N)  "      ,0,\
+                "VALOR INVÁLIDO  "      ,0
 
         ALIGN
             

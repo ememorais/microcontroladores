@@ -77,7 +77,7 @@ Start
 	BL Winder_Init 
 	
 MainLoop
-    MOV   R0, #100
+    MOV   R0, #300
 	BL    SysTick_Wait1ms
     BL Winder_Query
     B  MainLoop

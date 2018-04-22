@@ -6,23 +6,23 @@
         IMPORT  LCD_PushConfig
         IMPORT  LCD_PushString
         IMPORT  LCD_PushChar
-        IMPORT LCD_ClearLine_2
+        IMPORT  LCD_ClearLine_2
             
         EXPORT  Winder_Query
         EXPORT  Winder_Init
             
         ALIGN
 
-
-DATA_ROTATIONS      EQU 0x20000500
-DATA_DIRECTION      EQU 0x20000504
-DATA_SPEED          EQU 0x20000508
+DATA_POINTER        EQU 0x20000500
+DATA_ROTATIONS      EQU 0x20000504
+DATA_DIRECTION      EQU 0x20000508
+DATA_SPEED          EQU 0x2000050C
 
 STRING_FLAG 	    EQU 0x20001000
 LAST_STRING_FLAG    EQU 0x20001004
 INPUT_FLAG          EQU 0x20001008
 LAST_INPUT_FLAG     EQU 0x20001008
-POLL_FLAG           EQU 0x2000100C
+ERROR_STRING_FLAG   EQU 0x2000100C
     
     
 Winder_Init
@@ -35,6 +35,10 @@ Winder_Init
     STR     R1, [R0]
     
     MOV     R1, #0x00
+    LDR     R0, =DATA_POINTER
+    STR     R1, [R0]
+    
+    MOV     R1, #0x00
     LDR     R0, =LAST_INPUT_FLAG
     STR     R1, [R0]
     
@@ -43,7 +47,7 @@ Winder_Init
     STR     R1, [R0]
     
     MOV     R1, #0x00
-    LDR     R0, =POLL_FLAG
+    LDR     R0, =ERROR_STRING_FLAG
     STR     R1, [R0]
     BX      LR
 
@@ -73,18 +77,48 @@ winder_string_rotation              ;Escolhe uma frase dependendo do valor de
     BNE     winder_string_direction
     MOV     R0, R1
     BL      Display_Query
+    
+    LDR     R0, =DATA_ROTATIONS
+    LDR     R1, =DATA_POINTER
+    STR     R0, [R1]
+    
     B       winder_button_input
 winder_string_direction
     CMP     R1, #1
     BNE     winder_string_speed
     MOV     R0, R1
     BL      Display_Query
+    
+    LDR     R0, =DATA_DIRECTION
+    LDR     R1, =DATA_POINTER
+    STR     R0, [R1]
+    
     B       winder_button_input
 winder_string_speed
     CMP     R1, #2
+    BNE     winder_string_execute
+    MOV     R0, R1
+    BL      Display_Query
+    
+    LDR     R0, =DATA_SPEED
+    LDR     R1, =DATA_POINTER
+    STR     R0, [R1]
+    
+winder_string_execute
+    CMP     R1, #3
     BNE     winder_button_input
     MOV     R0, R1
     BL      Display_Query
+    
+    LDR     R2, =INPUT_FLAG        ;Desliga input
+    MOV     R0, #0xFF
+    STR     R0, [R2]
+    
+    BL      Winder_SanitizeInput
+    
+    NOP
+    ;LÓGICA DE EXECUÇÃO VAI NESTE ESTADO
+    
   
     
 winder_button_input
@@ -103,7 +137,8 @@ winder_button_lsd
     CMP     R1, #0x00
     BNE     winder_button_msd
     
-    LDR     R2, =DATA_ROTATIONS    ;Coloca o valor lido na memoria
+    LDR     R2, =DATA_POINTER    ;Coloca o valor lido na memoria
+    LDR     R2, [R2]
     STR     R0, [R2]
     
     ADD     R0, #48                ;Coloca o valor lido no LCD
@@ -120,7 +155,8 @@ winder_button_msd
      
     PUSH    {R0}
     
-    LDR     R2, =DATA_ROTATIONS    ;Multiplica o valor na memória por 10 e soma o valor lido agora
+    LDR     R2, =DATA_POINTER    ;Multiplica o valor na memória por 10 e soma o valor lido agora
+    LDR     R2, [R2]
     LDR     R0, [R2]
     
     MOV     R1, #10
@@ -130,7 +166,7 @@ winder_button_msd
     POP     {R0}
     ADD     R1, R0
     
-    STR     R0, [R2]
+    STR     R1, [R2]
     
     ADD     R0, #48                ;Coloca o valor lido no LCD
     BL      LCD_PushChar
@@ -144,7 +180,7 @@ winder_button_confirm
     CMP R0, #'#'
     BNE winder_end
     
-    LDR     R2, =STRING_FLAG        ;Passa flag de string para próxima posição
+    LDR     R2, =STRING_FLAG       ;Passa flag de string para próxima posição
     LDR     R0, [R2]
     ADD     R0, #1
     STR     R0, [R2]
@@ -153,13 +189,57 @@ winder_button_confirm
     MOV     R0, #0
     STR     R0, [R2]
     
-    BL      LCD_ClearLine_2         ;Limpa 2a linha do LCD
+    BL      LCD_ClearLine_2        ;Limpa 2a linha do LCD
     
     
 
 winder_end
     POP     {R0, R1, R2, R3, LR}
     BX LR
+    
+    
+    
+Winder_SanitizeInput 
+    ;DATA_ROTATIONS      
+    ;DATA_DIRECTION      
+    ;DATA_SPEED 
+
+    PUSH {R0, R1, LR}
+    LDR R1, =DATA_ROTATIONS
+    LDR R0, [R1]
+    
+    CMP R0, #0
+    ITT  EQ
+    ADDEQ R0, #1
+    STREQ R0, [R1]
+    
+    CMP R0, #10
+    ITT GT
+    MOVGT R0, #10
+    STRGT R0, [R1]
+    
+    
+    LDR R1, =DATA_DIRECTION
+    LDR R0, [R1]
+    
+    CMP R0, #0
+    ITT NE
+    MOVNE R0, #1
+    STRNE R0, [R1]
+    
+    LDR R1, =DATA_SPEED
+    LDR R0, [R1]
+    
+    CMP R0, #0
+    ITT NE
+    MOVNE R0, #1
+    STRNE R0, [R1]
+    
+
+    POP {R0, R1, LR}
+    BX  LR
+
+
 
 Display_Query
     PUSH    {R0, LR}
