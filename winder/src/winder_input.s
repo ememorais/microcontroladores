@@ -122,10 +122,11 @@ winder_state_speed
     LDR     R0, =DATA_SPEED             ;Coloca dado de velocidade no ponteiro de dados
     LDR     R1, =DATA_POINTER
     STR     R0, [R1]
+    B       winder_button_input
     
 winder_state_execute
     CMP     R1, #3
-    BNE     winder_button_input
+    BNE     winder_state_end
     
     LDR     R0, =LAST_STATE_FLAG        ;Carrega ultimo valor da flag string em R0
     LDR     R2, [R0]
@@ -147,11 +148,39 @@ winder_state_execute
     LDR     R2, =DATA_READY             ;Avisa que dados estão prontos para uso
     MOV     R0, #0x1
     STR     R0, [R2]
+    B       winder_button_input
     
 winder_state_execute_update
     LDR     R0, =DATA_ROTATIONS
     LDR     R0, [R0]
     BL      Dislay_CurrentRotation
+    
+    LDR     R1, =DATA_READY             
+    LDR     R0, [R1]
+    
+    CMP     R0, #2                      
+    ITTT    EQ
+    LDREQ   R1, =STATE_FLAG
+    MOVEQ   R0, #4
+    STREQ   R0, [R1]
+    B       winder_button_input
+    
+    
+winder_state_end
+    CMP     R1, #4
+    BNE     winder_button_input
+
+    LDR     R1, =DATA_READY
+    LDR     R0, [R1]
+    
+    MOV     R0, #5
+    
+    BL      Display_Query
+    BL      LCD_ClearLine_2             ;Limpa 2a linha do LCD    
+    
+    B       winder_button_input
+
+    
     
     
 winder_button_input

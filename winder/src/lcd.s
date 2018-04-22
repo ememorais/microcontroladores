@@ -27,7 +27,8 @@ stringArray =   "UTFPR           "      ,0,\
                 "DIRECAO: <-1 0->"      ,0,\
                 "VELOC. 0>>>>  1>"      ,0,\
                 "ROTS. RESTS.:   "      ,0,\
-                "DIR: XX VEL:XXX "      ,0
+                "DIR: XX VEL:XXX "      ,0,\
+                "FIM             "      ,0
 
         ALIGN
             
