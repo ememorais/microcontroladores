@@ -57,13 +57,6 @@ Winder_Query
     LDR     R0, =STATE_FLAG             ;Carrega valor atual da flag string em R1
     LDR     R1, [R0]    
     
-    ;LDR     R0, =LAST_STATE_FLAG        ;Carrega ultimo valor da flag string em R0
-    ;LDR     R2, [R0]
-    
-    ;CMP     R2, R1                      ;Pula para input do botão se valor não mudou
-    ;BEQ     winder_button_input
-   
-    
 winder_state_rotation                   
     CMP     R1, #0
     BNE     winder_state_direction
@@ -178,6 +171,10 @@ winder_state_end
     BL      Display_Query
     BL      LCD_ClearLine_2             ;Limpa 2a linha do LCD    
     
+    LDR     R2, =INPUT_FLAG             ;Coloca input em estado que só aceita reset
+    MOV     R0, #3
+    STR     R0, [R2]
+    
     B       winder_button_input
 
     
@@ -240,13 +237,13 @@ winder_button_msd
 
 winder_button_confirm
     CMP R0, #'#'
-    BNE winder_end
+    BNE winder_button_reset
     
     LDR     R2, =STATE_FLAG             
     LDR     R0, [R2]
     
-    CMP     R0, #3                      ;Se flag atual for 3, não faz nada
-    BEQ     winder_end
+    CMP     R0, #3                      ;Se flag atual for 3 ou maior, não faz nada
+    BGE     winder_end
     
     ADD     R0, #1                      ;Passa flag de string para próxima posição
     STR     R0, [R2]
@@ -257,7 +254,26 @@ winder_button_confirm
     
     BL      LCD_ClearLine_2             ;Limpa 2a linha do LCD
     
+    B       winder_end
     
+winder_button_reset
+    CMP     R1, #0x03
+    BNE     winder_end
+    
+    CMP     R0, #'*'
+    BNE     winder_end
+    
+    LDR     R2, =STATE_FLAG
+    MOV     R0, #0
+    STR     R0, [R2]
+    
+    LDR     R2, =INPUT_FLAG             ;Reseta a flag de input
+    STR     R0, [R2]
+    
+    LDR     R2, =DATA_READY             ;Reseta a flag de input
+    STR     R0, [R2]
+    
+    B       winder_end
 
 winder_end
     POP     {R0, R1, R2, R3, LR}

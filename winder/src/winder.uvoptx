@@ -149,7 +149,23 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>158</LineNumber>
+          <LineNumber>276</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>2438</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\winder_input.s</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\LCD\winder_input.s\276</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>151</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>2244</Address>
           <ByteObject>0</ByteObject>
@@ -160,23 +176,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>.\winder_input.s</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\LCD\winder_input.s\158</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>170</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>2260</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\winder_input.s</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\LCD\winder_input.s\170</Expression>
+          <Expression>\\LCD\winder_input.s\151</Expression>
         </Bp>
       </Breakpoint>
       <MemoryWindow1>
