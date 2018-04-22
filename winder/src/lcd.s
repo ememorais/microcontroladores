@@ -26,8 +26,8 @@ stringArray =   "UTFPR           "      ,0,\
                 "N",223," DE VOLTAS:   ",0,\
                 "DIRECAO: <-1 0->"      ,0,\
                 "VELOC. 0>>>>  1>"      ,0,\
-                "EXECUTANDO (N)  "      ,0,\
-                "VALOR INVÁLIDO  "      ,0
+                "ROTS. RESTS.:   "      ,0,\
+                "DIR: XX VEL:XXX "      ,0
 
         ALIGN
             
@@ -119,7 +119,7 @@ stringCopy_end
 ; Saída: Nenhum
 ; Modifica: -- (apenas mudanças temporárias)
 LCD_PushChar
-    PUSH {R0, R2, R3, LR}
+    PUSH {R0, R1,  R2, R3, LR}
     MOV R2, R0
     MOV R0, #2_00000000
     BL  PortM_Output
@@ -131,7 +131,7 @@ LCD_PushChar
     BL  SysTick_Wait1us
     MOV R0, #2_00000000
     BL  PortM_Output
-    POP {R0, R2, R3, LR}
+    POP {R0,R1, R2, R3, LR}
     BX  LR
     
 LCD_ClearLine_2
@@ -145,6 +145,7 @@ LCD_ClearLine_2
 
 	POP {R0, LR}
 	BX	LR
+    
 
     
     ALIGN                        ;Garante que o fim da seção está alinhada 

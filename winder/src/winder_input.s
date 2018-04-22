@@ -57,19 +57,24 @@ Winder_Query
     LDR     R0, =STATE_FLAG             ;Carrega valor atual da flag string em R1
     LDR     R1, [R0]    
     
+    ;LDR     R0, =LAST_STATE_FLAG        ;Carrega ultimo valor da flag string em R0
+    ;LDR     R2, [R0]
+    
+    ;CMP     R2, R1                      ;Pula para input do botão se valor não mudou
+    ;BEQ     winder_button_input
+   
+    
+winder_state_rotation                   
+    CMP     R1, #0
+    BNE     winder_state_direction
+    
     LDR     R0, =LAST_STATE_FLAG        ;Carrega ultimo valor da flag string em R0
     LDR     R2, [R0]
-    
-            
     
     CMP     R2, R1                      ;Pula para input do botão se valor não mudou
     BEQ     winder_button_input
     
     STR     R1, [R0]                    ;Atualiza o ultimo valor lido com o valor atual
-    
-winder_state_rotation                   
-    CMP     R1, #0
-    BNE     winder_state_direction
     
     MOV     R0, R1                      ;Atualiza display com string [0]
     BL      Display_Query
@@ -81,7 +86,15 @@ winder_state_rotation
     B       winder_button_input
 winder_state_direction
     CMP     R1, #1
-    BNE     winder_state_speed          
+    BNE     winder_state_speed
+
+    LDR     R0, =LAST_STATE_FLAG        ;Carrega ultimo valor da flag string em R0
+    LDR     R2, [R0]
+    
+    CMP     R2, R1                      ;Pula para input do botão se valor não mudou
+    BEQ     winder_button_input
+    
+    STR     R1, [R0]                    ;Atualiza o ultimo valor lido com o valor atual
     
     MOV     R0, R1                      ;Atualiza display com string [1]
     BL      Display_Query
@@ -93,7 +106,15 @@ winder_state_direction
     B       winder_button_input
 winder_state_speed
     CMP     R1, #2
-    BNE     winder_state_execute        
+    BNE     winder_state_execute
+
+    LDR     R0, =LAST_STATE_FLAG        ;Carrega ultimo valor da flag string em R0
+    LDR     R2, [R0]
+    
+    CMP     R2, R1                      ;Pula para input do botão se valor não mudou
+    BEQ     winder_button_input
+    
+    STR     R1, [R0]                    ;Atualiza o ultimo valor lido com o valor atual
     
     MOV     R0, R1                      ;Atualiza display com string [2]
     BL      Display_Query               
@@ -106,8 +127,16 @@ winder_state_execute
     CMP     R1, #3
     BNE     winder_button_input
     
+    LDR     R0, =LAST_STATE_FLAG        ;Carrega ultimo valor da flag string em R0
+    LDR     R2, [R0]
+    
+    CMP     R2, R1                      ;Apenas atualiza se valor não mudou
+    BEQ     winder_state_execute_update
+    
+    STR     R1, [R0]                    ;Atualiza o ultimo valor lido com o valor atual
+      
     MOV     R0, R1                      ;Atualiza display com string [3]
-    BL      Display_Query
+    BL      Display_Executing
     
     LDR     R2, =INPUT_FLAG             ;Coloca input em um estado onde não é feita leitura
     MOV     R0, #0xFF
@@ -115,10 +144,15 @@ winder_state_execute
     
     BL      Winder_SanitizeInput        ;Trata os dados lidos, transformando-os em valores aceitáveis
     
-    NOP
-    ;LÓGICA DE EXECUÇÃO VAI NESTE ESTADO
+    LDR     R2, =DATA_READY             ;Avisa que dados estão prontos para uso
+    MOV     R0, #0x1
+    STR     R0, [R2]
     
-  
+winder_state_execute_update
+    LDR     R0, =DATA_ROTATIONS
+    LDR     R0, [R0]
+    BL      Dislay_CurrentRotation
+    
     
 winder_button_input
     LDR     R0, =INPUT_FLAG             ;Carrega valor atual da flag input em R1
@@ -182,7 +216,7 @@ winder_button_confirm
     LDR     R2, =STATE_FLAG             
     LDR     R0, [R2]
     
-    CMP     R0, #0x03                   ;Se flag atual for 0xFF, não faz nada
+    CMP     R0, #3                      ;Se flag atual for 3, não faz nada
     BEQ     winder_end
     
     ADD     R0, #1                      ;Passa flag de string para próxima posição
@@ -256,6 +290,92 @@ Display_Query
     POP     {R0, LR}
     BX      LR
     
+Display_Executing
+    PUSH    {R0, LR}
+    MOV     R0, #0x80              	;Coloca cursor na 1a posição da 1a linha
+    BL      LCD_PushConfig
+    
+    
+    MOV     R0, #5                  ;Coloca string "executando" na 1a linha
+    BL      LCD_PushString
+    
+    MOV     R0, #0xC0               ;Coloca cursor na 1a posição da 2a linha
+    BL      LCD_PushConfig
+    
+    MOV     R0, #6              
+    BL      LCD_PushString
+    
+    MOV     R0, #0xC5              	
+    BL      LCD_PushConfig
+    
+    LDR     R0, =DATA_DIRECTION
+    LDR     R1, [R0]
+    
+    CMP     R1, #1
+    ITE     EQ
+    MOVEQ   R0, #'<'
+    MOVNE   R0, #'-'
+    BL      LCD_PushChar
+    
+    CMP     R1, #1
+    ITE     EQ
+    MOVEQ   R0, #'-'
+    MOVNE   R0, #'>'
+    BL      LCD_PushChar
+    
+    MOV     R0, #0xCC              	
+    BL      LCD_PushConfig
+    
+    LDR     R0, =DATA_SPEED
+    LDR     R1, [R0]
+    
+    MOV     R0, #'1'
+    BL      LCD_PushChar
+    
+    CMP     R1, #1
+    ITE     EQ
+    MOVEQ   R0, #'/'
+    MOVNE   R0, #' '
+    BL      LCD_PushChar
+    
+    CMP     R1, #1
+    ITE     EQ
+    MOVEQ   R0, #'2'
+    MOVNE   R0, #' '
+    BL      LCD_PushChar
+    
+    POP     {R0, LR}
+    BX      LR
+
+
+Dislay_CurrentRotation
+    PUSH    {R0, LR}
+    PUSH    {R0}
+    MOV     R0, #0x8E              	;Coloca cursor na 1a posição da 1a linha
+    BL      LCD_PushConfig
+    
+    POP     {R0}
+    CMP     R0, #10
+    BLT     display_currentRotation_singleDigit
+    
+    MOV     R0, #49
+    BL      LCD_PushChar
+    MOV     R0, #48
+    BL      LCD_PushChar
+    
+    B       display_currentRotation_end
+    
+display_currentRotation_singleDigit    
+    ADD     R0, #48
+    BL      LCD_PushChar
+    
+    MOV     R0, #' '
+    BL      LCD_PushChar
+ 
+display_currentRotation_end
+    POP     {R0, LR}
+    BX      LR
+
 
     
     
