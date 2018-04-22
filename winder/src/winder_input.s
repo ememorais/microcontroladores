@@ -22,6 +22,8 @@ INPUT_FLAG          EQU 0x20001008
         EXPORT  Winder_Query
         EXPORT  Winder_Init
             
+        IMPORT LAST_KEY
+            
         ALIGN
 
 
@@ -46,6 +48,10 @@ Winder_Init
     
     MOV     R1, #0x00
     LDR     R0, =DATA_READY
+    STR     R1, [R0]
+    
+    MOV     R1, #0xFF
+    LDR     R0, =LAST_KEY
     STR     R1, [R0]
     
 

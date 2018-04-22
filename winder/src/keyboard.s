@@ -2,6 +2,7 @@
 ;Tudo abaixo da diretiva a seguir será armazenado na memória de código
 
 ROW_SIZE EQU 4
+LAST_KEY EQU 0x20000100
 
         AREA    |.text|, CODE, READONLY, ALIGN=2
         THUMB
@@ -12,11 +13,15 @@ ROW_SIZE EQU 4
         EXPORT  Keyboard_Poll
         IMPORT  PortM_OutputKeyboard
         IMPORT  PortD_Input
+            
+        EXPORT LAST_KEY
                 
 keyboardArray = 1, 2, 3, 'A',\
                 4, 5, 6, 'B',\
                 7, 8, 9, 'C',\
                 '*', 0, '#', 'D'
+                
+              
 
 columnArray   = 2_01110000, 2_01101000, 2_01011000, 2_00111000
                
@@ -62,7 +67,12 @@ keyboard_undetected
     B       keyboard_poll_loop
 
 keyboard_poll_no_result
-    MOV     R0, #0xFF               ;Coloca 0xFF se nada foi detectado
+    LDR     R1, =LAST_KEY           ;ONRELEASE: se tinha uma tecla detectada anteriormente, manda a tecla
+    LDR     R0, [R1]
+    
+    MOV   R2, #0xFF                 ;reseta a tecla vista anteriormente
+    STR   R2, [R1]
+    
     
 keyboard_poll_exit    
     POP     {R1, R2, R3, R4, R5, R6, R7, R8, LR}
@@ -71,6 +81,9 @@ keyboard_getChar
     LDR     R1, =keyboardArray          ;Endereço do vetor de caracteres do teclado          
     ADD     R1, R0                      ;Coloca o valor calculado como offset de bytes no endereço
     LDRB    R0, [R1]                    ;Coloca o byte escolhido em R0
+    LDR     R1, =LAST_KEY               ;ONRELEASE: guarda o valor lido em LAST_KEY e retorna 0xFF
+    STR     R0, [R1]
+    MOV     R0, #0xFF
     B keyboard_poll_exit
     
     

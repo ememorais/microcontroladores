@@ -50,7 +50,7 @@ END_POS 	EQU 0x2000004B
         IMPORT  PortJ_Input
 		IMPORT  PortK_Output
         IMPORT  PortM_Output
-        IMPORT PortM_OutputRelay
+        IMPORT  PortM_OutputRelay
             
         IMPORT  LCD_Init
 		IMPORT  LCD_PushConfig
@@ -61,6 +61,8 @@ END_POS 	EQU 0x2000004B
          
         IMPORT Winder_Init      
         IMPORT Winder_Query
+            
+
             
 	
             
@@ -77,7 +79,7 @@ Start
 	BL Winder_Init 
 	
 MainLoop
-    MOV   R0, #300
+    MOV   R0, #50
 	BL    SysTick_Wait1ms
     BL Winder_Query
     B  MainLoop
