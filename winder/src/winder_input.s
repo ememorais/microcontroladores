@@ -18,11 +18,18 @@ INPUT_FLAG          EQU 0x20001008
         IMPORT  LCD_PushString
         IMPORT  LCD_PushChar
         IMPORT  LCD_ClearLine_2
+		IMPORT  GPIOPortJ_Handler
             
         EXPORT  Winder_Query
         EXPORT  Winder_Init
             
-        IMPORT LAST_KEY
+        IMPORT  LAST_KEY
+			
+		EXPORT  DATA_READY
+		EXPORT	DATA_ROTATIONS
+		EXPORT	DATA_DIRECTION
+		EXPORT	DATA_SPEED
+		EXPORT  STATE_FLAG
             
         ALIGN
 
@@ -276,9 +283,11 @@ winder_button_reset
     LDR     R2, =INPUT_FLAG             ;Reseta a flag de input
     STR     R0, [R2]
     
-    LDR     R2, =DATA_READY             ;Reseta a flag de input
+    LDR     R2, =DATA_READY             
     STR     R0, [R2]
     
+	BL		GPIOPortJ_Handler
+	
     B       winder_end
 
 winder_end

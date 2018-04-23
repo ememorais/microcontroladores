@@ -8,17 +8,11 @@
 ; -------------------------------------------------------------------------------
         THUMB                        ; Instruções do tipo Thumb-2
 ; -------------------------------------------------------------------------------
-		
 ; Declarações EQU - Defines
 ;<NOME>         EQU <VALOR>
 ; ========================
 ; Definições de Valores
-BIT0	    EQU 2_0001
-BIT1	    EQU 2_0010
-END_POS 	EQU 0x2000004B
-
-   
-
+		
 ; -------------------------------------------------------------------------------
 ; Área de Dados - Declarações de variáveis
 		AREA  DATA, ALIGN=2
@@ -26,6 +20,9 @@ END_POS 	EQU 0x2000004B
 ; Se alguma variável for chamada em outro arquivo
 ;EXPORT  <var> [DATA,SIZE=<tam>]            ; Permite chamar a variável <var> a 
                                             ; partir de outro arquivo
+		IMPORT DATA_READY
+		IMPORT CONFIG_TIMER
+		IMPORT STATE_FLAG
 ;<var>	SPACE <tam>                         ; Declara uma variável de nome <var>
                                             ; de <tam> bytes a partir da primeira 
                                             ; posição da RAM		
@@ -50,24 +47,27 @@ END_POS 	EQU 0x2000004B
         IMPORT  PortJ_Input
 		IMPORT  PortK_Output
         IMPORT  PortM_Output
-        IMPORT  PortM_OutputRelay
+		IMPORT  PortF_Output
+		IMPORT  PortN_Output
             
         IMPORT  LCD_Init
 		IMPORT  LCD_PushConfig
         IMPORT  LCD_PushString
 		IMPORT  LCD_PushChar
             
-        IMPORT Keyboard_Poll
-         
-        IMPORT Winder_Init      
-        IMPORT Winder_Query
-            
+        IMPORT 	Keyboard_Poll
+			
+		IMPORT 	Winder_Init      
+        IMPORT 	Winder_Query
 
-            
-	
-            
-            
-
+		IMPORT	Init_sequence_passo_completo
+		IMPORT  Init_sequence_meio_passo
+		IMPORT  Init_passo
+		IMPORT  Pisca_led
+			
+		IMPORT 	Timer_Init
+		
+		IMPORT 	Interruption_init
 
 ; -------------------------------------------------------------------------------
 ; Função main()
@@ -75,59 +75,36 @@ Start
 	BL PLL_Init          		;Altera o clock do microcontrolador para 80MHz
 	BL SysTick_Init      		;Inicializa o SysTick
 	BL GPIO_Init         		;Inicializa os pinos de GPIO
-    BL LCD_Init          		;Inicializa o LCD     		
+    BL LCD_Init          		;Inicializa o LCD
 	BL Winder_Init 
+	BL Init_sequence_passo_completo
+	BL Init_sequence_meio_passo
+	BL Interruption_init
 	
 MainLoop
-    MOV   R0, #50
+	MOV   R0, #50
 	BL    SysTick_Wait1ms
-    BL Winder_Query
-    B  MainLoop
-
-
-;------------Display_UTFPR------------
-; Entrada: Nenhum
-; Saída: Nenhum
-; Modifica: -- (apenas mudanças temporárias)
-Display_UTFPR
-	PUSH {R0, LR}
+    BL 	  Winder_Query
 	
-	MOV R0, #0x80              	;Coloca cursor na 1a posição da 1a linha
-	BL	LCD_PushConfig
+	LDR   R0, =STATE_FLAG
+	LDR   R1, [R0]
+	CMP   R1, #4
+	BLEQ  Pisca_led
 	
-	MOV	R0, #0                  ;Manda string [0] para o display
-    BL  LCD_PushString
+	LDR  R0, =DATA_READY
+	LDR  R1, [R0]
+	CMP  R1, #1
+	BNE  fim_main
+	LDR  R0, =CONFIG_TIMER
+	LDR  R1, [R0]
+	CMP  R1, #1
+	BEQ  fim_main
+	BL	 Init_passo
+	BL	 Timer_Init
 	
-	MOV R0, #0xC0               ;Coloca cursor na 1a posição da 2a linha
-	BL	LCD_PushConfig
+fim_main
+	B  	MainLoop
 	
-	MOV	R0, #1                  ;Manda string [1] para o display
-    BL  LCD_PushString
-
-	POP {R0, LR}
-	BX	LR
-	
-;------------Display_Equipe------------
-; Entrada: Nenhum
-; Saída: Nenhum
-; Modifica: -- (apenas mudanças temporárias)
-Display_Equipe
-	PUSH {R0, LR}
-	
-	MOV R0, #0x80          		;Coloca cursor na 1a posição da 1a linha
-	BL	LCD_PushConfig     		 
-									
-	MOV	R0, #2             		;Manda string [2] para o display
-    BL  LCD_PushString     		 
-									
-	MOV R0, #0xC0          		;Coloca cursor na 1a posição da 2a linha
-	BL	LCD_PushConfig     		 
-									
-	MOV	R0, #3             		;Manda string [3] para o display
-    BL  LCD_PushString
-	
-	POP {R0, LR}
-	BX	LR
-
+	NOP
     ALIGN                        ;Garante que o fim da seção está alinhada 
     END                          ;Fim do arquivo
