@@ -237,6 +237,7 @@ NVIC_ST_CURRENT_R     EQU 0xE000E018
         EXPORT  SysTick_Init
 		EXPORT  SysTick_Wait1ms
 		EXPORT  SysTick_Wait1us
+        EXPORT  Convert_BitsToDecimal
 ;------------SysTick_Init------------
 ; Configura o sistema para utilizar o SysTick para delays
 ; Entrada: Nenhum
@@ -305,6 +306,25 @@ SysTick_Wait1us_loop
 	BHI SysTick_Wait1us_loop 			; se (numEsperasRestantes > 0), espera mais 1ms
 SysTick_Wait1us_done
 	POP {R4, PC}                        ;return
+
+
+Convert_BitsToDecimal
+    PUSH {R1, R2, R3, R4}
+    MOV R1, #1                             ;Contador
+    MOV R2, #0                             ;Soma
+    EOR R0, R0, #0x0F                      ;Inverte entrada
+    
+convert_bitsToDecimal_loop
+    AND R3, R0, #1                         ;Checa ultimo bit
+    MUL R4, R1, R3                         ;bit * contador
+    ADD R2, R4                             ;soma += (bit * contador)
+    ADD R1, #1
+    LSR R0, #1
+    CMP R1, #4
+    BLE convert_bitsToDecimal_loop
+    MOV R0, R2
+    POP {R1, R2, R3, R4}
+    BX LR
 ; -------------------------------------------------------------------------------------------------------------------------
 ; Fim do Arquivo
 ; -------------------------------------------------------------------------------------------------------------------------

@@ -410,6 +410,16 @@
               <FileType>2</FileType>
               <FilePath>.\lcd.s</FilePath>
             </File>
+            <File>
+              <FileName>motor_input.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\motor_input.c</FilePath>
+            </File>
+            <File>
+              <FileName>keyboard.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\keyboard.s</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
