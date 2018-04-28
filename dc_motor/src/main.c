@@ -12,7 +12,8 @@ void GPIO_Init(void);
 uint32_t PortJ_Input(void);
 void PortN_Output(uint32_t leds);
 void LCD_Init(void);
-void LCD_PushString(int);
+
+
 
 int main(void)
 {
@@ -22,14 +23,10 @@ int main(void)
     LCD_Init();
     
     LCD_PushString(4);
-    
-	while (1)
+
+	while(1) 
 	{
-		if (PortJ_Input() == 0x1)
-			PortN_Output(0x3);
-		else
-			PortN_Output(0x0);
-    }         
-    
+
+	}
 }
 
