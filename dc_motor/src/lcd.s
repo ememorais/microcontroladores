@@ -12,7 +12,9 @@ STRING_SIZE EQU 17
         EXPORT  LCD_Init
         EXPORT  LCD_PushConfig
         EXPORT  LCD_PushString
+        EXPORT  LCD_PushChar
         EXPORT  LCD_PushCustomString
+        EXPORT  LCD_PositionCursor
          
         IMPORT  SysTick_Wait1ms
         IMPORT  SysTick_Wait1us
@@ -143,7 +145,7 @@ customStringCopy_end
 ; Saída: Nenhum
 ; Modifica: -- (apenas mudanças temporárias)
 LCD_PushChar
-    PUSH {R12, R0, R2, LR}
+    PUSH {R0, R1, R2, R3, R12, LR}
     MOV R2, R0
     MOV R0, #2_00000000
     BL  PortM_Output
@@ -155,8 +157,33 @@ LCD_PushChar
     BL  SysTick_Wait1us
     MOV R0, #2_00000000
     BL  PortM_Output
-    POP {R12, R0, R2, LR}
+    POP {R0, R1, R2, R3, R12, LR}
     BX  LR
+
+;------------LCD_PositionCursor------------
+; Modifica posição do cursor de acordo com parâmetros recebidos
+;   0x80 + (linha * 0x40) + coluna
+; Entrada:  R0 --> Linha
+;           R1 --> Coluna
+
+; Saída: Nenhum
+LCD_PositionCursor
+    PUSH {R0, R1, R2, LR}
+
+    MOV R2, #0x40
+    MUL R2, R0
+
+    ADD R2, R1
+
+    ADD R2, #0x80
+
+    MOV R0, R2
+
+    BL LCD_PushConfig
+
+    POP {R0, R1, R2, LR}
+    BX  LR
+
 
     
     ALIGN                        ;Garante que o fim da seção está alinhada 

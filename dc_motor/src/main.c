@@ -25,8 +25,6 @@ int main(void)
 	GPIO_Init();
     LCD_Init();
 	Keyboard_Init();
-
-	LCD_PushString(0);
     
     MotorInput_Process(0);
 
