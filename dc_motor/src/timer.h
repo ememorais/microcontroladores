@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "tm4c1294ncpdt.h"
 #include "globals.h"
-#include "motor_input.h"
+#include "dc_motor.h"
 
 void Timer_Init(void);
 

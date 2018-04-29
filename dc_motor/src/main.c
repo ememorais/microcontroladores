@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include "globals.h"
 #include "lcd.h"
-#include "motor_input.h"
+#include "dc_motor.h"
 #include "utils.h"
 #include "keyboard.h"
 #include "timer.h"
@@ -31,17 +31,17 @@ int main(void)
 	Keyboard_Init();
     Timer_Init();
     
-    MotorInput_Process(0);
+    Motor_Process(0);
 
 	while(1) 
 	{
 		SysTick_Wait1ms(50);
-		MotorInput_Process(Keyboard_Poll());
+		Motor_Process(Keyboard_Poll());
 		if(timer_counter >= 1000)
 		{
 			timer_counter = 0;
 			motor_speed++;
-			MotorDisplay_Running();
+			Motor_DisplayRunning();
 		}
 	}
 }

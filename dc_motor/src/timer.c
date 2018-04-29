@@ -46,5 +46,5 @@ void Timer0A_Handler(void)
     //for maior do que a velocidade atual do motor desejada
     pwm_bit = (pwm_counter >= (motor_speed/10));
 
-    MotorInput_Control();
+    Motor_Control();
 }
