@@ -1,5 +1,8 @@
 #include <stdint.h>
 
+#if LIB_LCD != 2
+      #warning "Versão do arquivo LCD errada! Verifique"
+#endif
 
 void LCD_Init(void);
 

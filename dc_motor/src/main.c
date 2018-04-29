@@ -2,12 +2,15 @@
 // Desenvolvido para a placa EK-TM4C1294XL
 // TODO: explicação
 
+#define LIB_LCD     2
+#define LIB_KB      2
+#define LIB_UTILS   2
+
 #include <stdint.h>
 #include "lcd.h"
 #include "motor_input.h"
 #include "utils.h"
 #include "keyboard.h"
-
 
 void PLL_Init(void);
 void SysTick_Init(void);
