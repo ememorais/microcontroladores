@@ -44,13 +44,16 @@ void MotorInput_Control(void)
 {
     uint8_t motor_output = 0x00;
 
-    //Coloca 1 no pino 1 ou 2 dependendo da direção
-    if(motor_speed)
+    
+    if(motor_speed) 
+    {
+        //Coloca 1 no pino 1 ou 2 dependendo da direção
         motor_output |= 1 << (1 + motor_direction);
 
-    //Coloca PWM no pino 2 ou 1 dependendo da direção
-    if(pwm_bit)
-        motor_output |= 1 << (2 - motor_direction);
+        //Coloca PWM no pino 2 ou 1 dependendo da direção
+        if(pwm_bit)
+            motor_output |= 1 << (2 - motor_direction);
+    }
 
     PortF_Output_Dc_Motor(motor_output);
 }
