@@ -1,8 +1,9 @@
 #include "timer.h"
 
 volatile uint32_t   timer_counter = 0;
-volatile uint32_t   pwm_counter;
-volatile uint8_t    pwm_bit;
+volatile uint32_t   pwm_counter = 0;
+volatile uint8_t    pwm_bit = 0;
+volatile uint32_t   keyboard_counter = 0;
 
 void Timer_Init(void) 
 {
@@ -21,7 +22,7 @@ void Timer_Init(void)
 
     //TIMER0_TAILR_R  = 0x00013880; //1ms
 
-    TIMER0_TAILR_R  = 0x00003E80;
+    TIMER0_TAILR_R  = 0x00003E80;   //200us
 
     TIMER0_ICR_R    |= 0x01;
 
@@ -38,13 +39,15 @@ void Timer0A_Handler(void)
 {
     TIMER0_ICR_R |= 0x01;
 
-    //Incrementa pwm_counter e coloca pra zero se passar de 10
+    //Incrementa pwm_counter e coloca pra zero se passar de 10 (2ms/500hz)
     if(++pwm_counter >= 10)
         pwm_counter = 0;
 
     //Coloca o bit pwm como 0 ou 1 dependendo se a contagem 
     //for maior do que a velocidade atual do motor desejada
     pwm_bit = (pwm_counter >= (motor_speed/10));
+
+    keyboard_counter++;
 
     Motor_Control();
 }

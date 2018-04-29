@@ -35,14 +35,10 @@ int main(void)
 
 	while(1) 
 	{
-		SysTick_Wait1ms(50);
-		Motor_Process(Keyboard_Poll());
-		if(timer_counter >= 1000)
-		{
-			timer_counter = 0;
-			motor_speed++;
-			Motor_DisplayRunning();
-		}
+		//Se passaram 250*200us = 50ms, faz polling do teclado
+		//e manda processar dado lido para o motor
+		if(keyboard_counter >= 250) 
+			Motor_Process(Keyboard_Poll());
 	}
 }
 

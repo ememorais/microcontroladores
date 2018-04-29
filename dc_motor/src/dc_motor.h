@@ -13,5 +13,4 @@ void Motor_DisplayStopped(void);
 
 void Motor_DisplayRunning(void);
 
-
 #endif
