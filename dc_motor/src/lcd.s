@@ -12,6 +12,7 @@ STRING_SIZE EQU 17
         EXPORT  LCD_Init
         EXPORT  LCD_PushConfig
         EXPORT  LCD_PushString
+        EXPORT  LCD_PushCustomString
          
         IMPORT  SysTick_Wait1ms
         IMPORT  SysTick_Wait1us
@@ -107,6 +108,32 @@ stringCopy                      ;Copia a string byte a byte, colocando-os em R0 
     BL  LCD_PushChar
     B   stringCopy
 stringCopy_end    
+    POP {R12, R0, R4, R5, R6, LR}
+    BX  LR
+
+
+
+LCD_PushCustomString
+;------------LCD_PushString------------
+; Envia uma string para o LCD.
+; Entrada: R0 --> Posição no vetor da string a ser enviada
+;          R1 --> Ponteiro para vetor de strings que deve ser lido
+; Saída: Nenhum
+; Modifica: -- (apenas mudanças temporárias)
+    PUSH {R12, R0, R4, R5, R6, LR}
+    
+    MOV R6, #STRING_SIZE        
+    MOV R4, R1
+    MUL R5, R0, R6
+    ADD R4, R5
+
+customStringCopy                      ;Copia a string byte a byte, colocando-os em R0 e mandando-os para o LCD.
+    LDRB R0, [R4], #1           ;Termina o envio quando um '0' é detectado na string.
+    CMP R0, #'\0'
+    BEQ stringCopy_end 
+    BL  LCD_PushChar
+    B   stringCopy
+customStringCopy_end    
     POP {R12, R0, R4, R5, R6, LR}
     BX  LR
 

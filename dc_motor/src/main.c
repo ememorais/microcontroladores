@@ -1,19 +1,22 @@
 // main.c
 // Desenvolvido para a placa EK-TM4C1294XL
-// Verifica o estado da chave USR_SW2 e acende os LEDs 1 e 2 caso esteja pressionada
-// Prof. Guilherme Peron
+// TODO: explicação
 
 #include <stdint.h>
+#include "lcd.h"
+#include "motor_input.h"
+#include "utils.h"
+#include "keyboard.h"
+
 
 void PLL_Init(void);
 void SysTick_Init(void);
-void SysTick_Wait1ms(uint32_t delay);
 void GPIO_Init(void);
 uint32_t PortJ_Input(void);
 void PortN_Output(uint32_t leds);
-void LCD_Init(void);
 
-
+extern volatile uint32_t motor_speed;
+extern volatile uint32_t motor_direction;
 
 int main(void)
 {
@@ -21,12 +24,14 @@ int main(void)
 	SysTick_Init();
 	GPIO_Init();
     LCD_Init();
-    
-    LCD_PushString(4);
+	Keyboard_Init();
+
+	LCD_PushString(0);
 
 	while(1) 
 	{
-		
+		SysTick_Wait1ms(50);
+		MotorInput_Query();
 	}
 }
 

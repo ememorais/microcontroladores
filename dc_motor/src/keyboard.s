@@ -11,6 +11,7 @@ LAST_KEY EQU 0x20000100
         IMPORT  Convert_BitsToDecimal
         
         EXPORT  Keyboard_Poll
+        EXPORT  Keyboard_Init
         IMPORT  PortM_OutputKeyboard
         IMPORT  PortD_Input
             
@@ -26,6 +27,15 @@ keyboardArray = 1, 2, 3, 17,\
 columnArray   = 2_01110000, 2_01101000, 2_01011000, 2_00111000
                
         ALIGN
+
+Keyboard_Init
+    PUSH    {R0, R1}
+    MOV     R1, #0xFF
+    LDR     R0, =LAST_KEY
+    STR     R1, [R0]
+    POP     {R0, R1}
+    BX      LR
+
 ;------------Keyboard_Poll------------
 ; Checa se alguma tecla foi pressionada.
 ; Parâmetro de entrada: 

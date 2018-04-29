@@ -28,7 +28,7 @@
 #define GPIO_PORTJ_BOTOES 		(*((volatile uint32_t *)0x4006003C))
 #define GPIO_PORTK_LCD_DATA		(*((volatile uint32_t *)0x400613FC))
 #define GPIO_PORTM_LCD_CTRL 	(*((volatile uint32_t *)0x4006301C))
-#define GPIO_PORTM_KB_COLUMNS 	(*((volatile uint32_t *)0x4005B1E0))
+#define GPIO_PORTM_KB_COLUMNS 	(*((volatile uint32_t *)0x400631E0))
 #define GPIO_PORTN_LEDS   		(*((volatile uint32_t *)0x4006403C))
 
 
@@ -117,7 +117,7 @@ void PortM_Output(uint32_t valor)
 
 void PortM_OutputKeyboard(uint32_t valor)
 {
-	GPIO_PORTM_LCD_CTRL = valor;
+	GPIO_PORTM_KB_COLUMNS = valor;
 }
 
 // -------------------------------------------------------------------------------
