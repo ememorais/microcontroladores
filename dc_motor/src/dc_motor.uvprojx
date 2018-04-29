@@ -465,6 +465,11 @@
               <FileType>5</FileType>
               <FilePath>.\gpio.h</FilePath>
             </File>
+            <File>
+              <FileName>globals.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\globals.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

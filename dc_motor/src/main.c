@@ -7,6 +7,7 @@
 #define LIB_UTILS   2
 
 #include <stdint.h>
+#include "globals.h"
 #include "lcd.h"
 #include "motor_input.h"
 #include "utils.h"
@@ -19,9 +20,7 @@ void GPIO_Init(void);
 uint32_t PortJ_Input(void);
 void PortN_Output(uint32_t leds);
 
-extern volatile uint32_t motor_speed;
-extern volatile uint32_t motor_direction;
-extern volatile uint32_t timer_counter;
+
 
 int main(void)
 {
