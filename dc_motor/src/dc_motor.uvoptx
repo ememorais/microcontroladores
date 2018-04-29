@@ -149,34 +149,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>7</LineNumber>
+          <LineNumber>48</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>2544</Address>
+          <Address>2414</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\timer.c</Filename>
+          <Filename>.\motor_input.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\exemplo\timer.c\7</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>28</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>2658</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\timer.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\exemplo\timer.c\28</Expression>
+          <Expression>\\exemplo\motor_input.c\48</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -449,6 +433,18 @@
       <bDave2>0</bDave2>
       <PathWithFileName>.\timer.h</PathWithFileName>
       <FilenameWithoutPath>timer.h</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>1</GroupNumber>
+      <FileNumber>17</FileNumber>
+      <FileType>5</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>.\gpio.h</PathWithFileName>
+      <FilenameWithoutPath>gpio.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

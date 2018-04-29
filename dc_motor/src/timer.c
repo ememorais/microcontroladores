@@ -31,6 +31,6 @@ void Timer_Init(void)
 void Timer0A_Handler(void) 
 {
         TIMER0_ICR_R |= 0x01;
-        timer_counter++;
+        //timer_counter++;
 
 }
