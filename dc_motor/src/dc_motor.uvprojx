@@ -450,6 +450,16 @@
               <FileType>5</FileType>
               <FilePath>.\keyboard.h</FilePath>
             </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\timer.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

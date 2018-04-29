@@ -3,6 +3,8 @@
 // Recebe e armazena dados do teclado que alteram o funcionamento do motor DC.
 // Marcelo Fernandes e Bruno Colombo
 
+#define LIB_LCD 2
+
 #include <stdint.h>
 #include "motor_input.h"
 

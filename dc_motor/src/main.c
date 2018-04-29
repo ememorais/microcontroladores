@@ -11,6 +11,7 @@
 #include "motor_input.h"
 #include "utils.h"
 #include "keyboard.h"
+#include "timer.h"
 
 void PLL_Init(void);
 void SysTick_Init(void);
@@ -20,6 +21,7 @@ void PortN_Output(uint32_t leds);
 
 extern volatile uint32_t motor_speed;
 extern volatile uint32_t motor_direction;
+extern volatile uint32_t timer_counter;
 
 int main(void)
 {
@@ -28,6 +30,7 @@ int main(void)
 	GPIO_Init();
     LCD_Init();
 	Keyboard_Init();
+    Timer_Init();
     
     MotorInput_Process(0);
 
@@ -35,6 +38,12 @@ int main(void)
 	{
 		SysTick_Wait1ms(50);
 		MotorInput_Process(Keyboard_Poll());
+		if(timer_counter >= 1000)
+		{
+			timer_counter = 0;
+			motor_speed++;
+			MotorDisplay_Running();
+		}
 	}
 }
 
