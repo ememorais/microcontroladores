@@ -4,7 +4,7 @@ uint8_t motorDisplay_strings[][17] =
 {
     {"MOTOR PARADO    "},
     {"VELOCIDADE: XXX%"},
-    {"ROTACAO: XX     "},
+    {"ROTACAO: X      "},
     {"                "}
 };
 
@@ -34,4 +34,11 @@ void MotorDisplay_Running(void) {
     
     LCD_PositionCursor(1, 0);
     LCD_PushCustomString(2, ((uint32_t)motorDisplay_strings));
+    
+    LCD_PositionCursor(1, 9);
+    
+    //Escolhe entre o caractere "->" ou o próximo "<-" se motor_direction for 1
+    LCD_PushChar(0x7E + motor_direction);
+    
+    
 }

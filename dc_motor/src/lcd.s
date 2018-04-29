@@ -54,7 +54,7 @@ LCD_Init
     BL  LCD_PushConfig
     
     ;Display on/off control
-    MOV R0, #2_00001110     ;(0 0 0 0|1 D C B)
+    MOV R0, #2_00001100     ;(0 0 0 0|1 D C B)
     BL  LCD_PushConfig
     
     ;Return home            ;(0 0 0 0|0 0 1 -)
