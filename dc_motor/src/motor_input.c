@@ -45,7 +45,8 @@ void MotorInput_Control(void)
     uint8_t motor_output = 0x00;
 
     //Coloca 1 no pino 1 ou 2 dependendo da direção
-    motor_output |= 1 << (1 + motor_direction);
+    if(motor_speed)
+        motor_output |= 1 << (1 + motor_direction);
 
     //Coloca PWM no pino 2 ou 1 dependendo da direção
     if(pwm_bit)
