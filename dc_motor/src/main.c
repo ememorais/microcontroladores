@@ -27,11 +27,13 @@ int main(void)
 	Keyboard_Init();
 
 	LCD_PushString(0);
+    
+    MotorInput_Process(0);
 
 	while(1) 
 	{
 		SysTick_Wait1ms(50);
-		MotorInput_Query();
+		MotorInput_Process(Keyboard_Poll());
 	}
 }
 
