@@ -1,4 +1,4 @@
-// motor_input.c
+// dc_motor.c
 // Desenvolvido para a placa EK-TM4C1294XL
 // Recebe e armazena dados do teclado que alteram o funcionamento do motor DC.
 // Marcelo Fernandes e Bruno Colombo
@@ -8,32 +8,67 @@
 #include <stdint.h>
 #include "dc_motor.h"
 
-volatile int32_t motor_speed = 0;
+//Armazena a velocidade do motor (0-100, % de PWM)
+volatile int32_t  motor_speed = 0;
+
+//Armazena a direção do motor (0-1, Horário/Anti-Horário)
 volatile uint32_t motor_direction = 0;
+
+//Guarda a direção anterior do motor quando 
+//um pedido de troca de direção é efetuado.
 volatile uint32_t motor_old_direction = 0;
 
+//Controla se o modo "smooth" está ativo
 volatile uint8_t  smooth_mode = 1;
+
+//Armazena a velocidade "smooth" do motor, 
+//que muda lentamente até alcançar a velocidade real do motor
 volatile int32_t  smooth_speed = 0;
+
+//Armazena informação se é necessária uma troca de direção smooth
+//(+Velocidade Atual -> 0 -> -Velocidade Atual)
 volatile uint8_t  smooth_swap = 0;
 
 
+// -----------------------------------------------------------------------------
+// Função Motor_Process
+//--------------------------------
+// Baseado no input recebido, armazena dados e inicia condições referentes
+// ao funcionamento do motor.
+// Após, a tela é atualizada para refletir as mudanças.
+// Caso modo "smooth" esteja ativo, armazena informações extras
+// para possibilitar transição suave.
+//--------------------------------
+// Entrada: input --> dado recebido de uma interface externa
+// -----------------------------------------------------------------------------
 void Motor_Process(int input)
 {
+    
+    //Para o motor
     if(input == 0)
     {
-        smooth_speed = motor_speed;
+        if(smooth_mode)
+            smooth_speed = motor_speed;
+
         motor_speed =  0;
             
         Motor_DisplayStopped();
+
         return;
     }
+    //Altera velocidade do motor dependendo do número escolhido
     else if (input >= 1 && input <= 7)
     {
-        smooth_speed = motor_speed;
+        if(smooth_mode)
+            smooth_speed = motor_speed;
+
         motor_speed = 30 + (input * 10);
+
         Motor_DisplayRunning();
+
         return;
     }
+    //Altera direção para horário
     else if (input == '*')
     {
         if(smooth_mode)
@@ -49,6 +84,7 @@ void Motor_Process(int input)
 
         return;
     }
+    //Altera direção para anti-horário
     else if (input == '#')
     {
         if(smooth_mode) {
@@ -64,6 +100,7 @@ void Motor_Process(int input)
         Motor_DisplayRunning();
         return;
     }
+    //Alterna modo "smooth"
     else if(input == 'A')
     {
         smooth_mode = !smooth_mode;
@@ -73,15 +110,24 @@ void Motor_Process(int input)
     }
 }
 
+
+// -----------------------------------------------------------------------------
+// Função Motor_Control
+//--------------------------------
+//Manda dados para o motor de acordo com valores atuais.
+// -----------------------------------------------------------------------------
 void Motor_Control(void) 
 {
     uint8_t motor_output = 0x00;
 
-    
+    //Se motor não estiver parado ou se estiver no modo smooth e este ainda 
+    //não alcançou a velocidade final, envia dados não-zerados para o motor
     if(motor_speed || (smooth_mode && smooth_speed)) 
     {
         uint8_t direction;
 
+        //Caso seja necessário inverter a direção suavemente, mantém a direção
+        //antiga até velocidade smooth zerar
         if(smooth_swap)
             direction = motor_old_direction;
         else
@@ -107,6 +153,13 @@ uint8_t motor_strings[][17] =
     {"                "}
 };
 
+// -----------------------------------------------------------------------------
+// Função Motor_DisplayStopped
+//--------------------------------
+// Manda para o LCD mensagem informando que o motor está parado.
+//--------------------------------
+// Entrada: input --> dado recebido de uma interface externa
+// -----------------------------------------------------------------------------
 void Motor_DisplayStopped(void) {
     LCD_PositionCursor(0, 0);
     LCD_PushCustomString(0, ((uint32_t)motor_strings));
@@ -115,8 +168,18 @@ void Motor_DisplayStopped(void) {
     LCD_PushCustomString(3, ((uint32_t)motor_strings));
 }
 
+
+// -----------------------------------------------------------------------------
+// Função Motor_DisplayRunning
+//--------------------------------
+// Manda para o LCD informações sobre velocidade, direção de rotação e se
+// o modo smooth está ativado.
+//--------------------------------
+// Entrada: input --> dado recebido de uma interface externa
+// -----------------------------------------------------------------------------
 void Motor_DisplayRunning(void) {
 
+    //Só atualiza velocidade na tela se esta for maior que 0
     if(motor_speed > 0) 
     {
         LCD_PositionCursor(0, 0);

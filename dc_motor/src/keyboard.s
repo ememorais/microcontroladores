@@ -1,3 +1,8 @@
+;keyboard.s
+;Desenvolvido para a placa EK-TM4C1294XL
+;Marcelo Fernandes e Bruno Colombo
+
+
 ;------------Área de Código------------
 ;Tudo abaixo da diretiva a seguir será armazenado na memória de código
 

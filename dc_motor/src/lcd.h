@@ -1,3 +1,8 @@
+// lcd.h
+// Desenvolvido para a placa EK-TM4C1294XL
+// Marcelo Fernandes e Bruno Colombo
+
+
 #include <stdint.h>
 
 void LCD_Init(void);

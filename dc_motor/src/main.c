@@ -1,10 +1,8 @@
 // main.c
 // Desenvolvido para a placa EK-TM4C1294XL
-// TODO: explicação
-
-#define LIB_LCD     2
-#define LIB_KB      2
-#define LIB_UTILS   2
+// Inicializa periféricos e faz um loop de polling 
+// e atualização do funcionamento do motor.
+// Marcelo Fernandes e Bruno Colombo
 
 #include <stdint.h>
 #include "globals.h"

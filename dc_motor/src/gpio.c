@@ -1,7 +1,7 @@
 // gpio.c
 // Desenvolvido para a placa EK-TM4C1294XL
-// Inicializa as portas J e N
-// Prof. Guilherme Peron
+// Inicializa portas D, F, J, K, M e N
+// Marcelo Fernandes e Bruno Colombo
 
 
 #include <stdint.h>
@@ -143,7 +143,3 @@ void PortN_Output(uint32_t valor)
 	//Ponteiro para o valor dos bits com leitura amigável
 	GPIO_PORTN_LEDS = valor;
 }
-
-
-
-

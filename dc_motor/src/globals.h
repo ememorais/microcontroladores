@@ -1,3 +1,8 @@
+// globals.h
+// Desenvolvido para a placa EK-TM4C1294XL
+// Marcelo Fernandes e Bruno Colombo
+
+
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
 

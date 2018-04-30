@@ -6,6 +6,11 @@ volatile uint8_t pwm_bit = 0;
 volatile uint32_t keyboard_counter = 0;
 volatile uint32_t smooth_counter = 0;
 
+// -----------------------------------------------------------------------------
+// Função Timer_Init
+//--------------------------------
+// Inicializa Timer 0 no modo A (32 bits) e com interrupção a cada 200 us.
+// -----------------------------------------------------------------------------
 void Timer_Init(void)
 {
     SYSCTL_RCGCTIMER_R |= SYSCTL_RCGCTIMER_R0;
@@ -21,11 +26,9 @@ void Timer_Init(void)
     TIMER0_TAMR_R &= ~0x03;
     TIMER0_TAMR_R |= 0x02;
 
-    //TIMER0_TAILR_R  = 0x00013880; //1ms
+    //TIMER0_TAILR_R  = 0x00013880; //= 1ms * 80e6hz
 
-    //TIMER0_TAILR_R  = 0x00013880; //1ms
-
-    TIMER0_TAILR_R = 0x00003E80; //200us
+    TIMER0_TAILR_R = 0x00003E80; //=200us * 80e6hz
 
     TIMER0_ICR_R |= 0x01;
 
@@ -38,21 +41,27 @@ void Timer_Init(void)
     TIMER0_CTL_R |= 0x01;
 }
 
+// -----------------------------------------------------------------------------
+// Função Timer0A_Handler
+//--------------------------------
+// Interrupção gerada pelo Timer 0
+// -----------------------------------------------------------------------------
 void Timer0A_Handler(void)
 {
     TIMER0_ICR_R |= 0x01;
 
     //Incrementa pwm_counter e coloca pra zero se passar de 10 (2ms/500hz)
     if (++pwm_counter >= 10)
-    {
         pwm_counter = 0;
-    }
 
-    //40ms
+    //Se está no modo smooth e se já passaram 40ms
     if (smooth_mode && (++smooth_counter >= 200))
     {
         smooth_counter = 0;
 
+        //Se está fazedo uma transição suave, aproxima iterativamente o valor
+        //de smooth_speed a 0. Após isso, Aproxima a velocidade suave ao valor
+        //atual de velocidade.
         if (smooth_swap && smooth_speed != 0)
         {
             smooth_speed -= 10;
@@ -72,14 +81,16 @@ void Timer0A_Handler(void)
         }
     }
 
-    //Coloca o bit pwm como 0 ou 1 dependendo se a contagem
+    //Coloca o bit PWM como 0 ou 1 dependendo se a contagem
     //for maior do que a velocidade atual do motor desejada
     if (smooth_mode)
         pwm_bit = (pwm_counter >= (smooth_speed / 10));
     else
         pwm_bit = (pwm_counter >= (motor_speed / 10));
 
+    //Aumenta contagem do contador de teclado (verificado na thread)
     keyboard_counter++;
 
+    //Manda dados para o motor
     Motor_Control();
 }

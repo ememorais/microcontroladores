@@ -1,3 +1,7 @@
+;keyboard.s
+;Desenvolvido para a placa EK-TM4C1294XL
+;Marcelo Fernandes e Bruno Colombo
+
 ;------------Constantes------------
 DELAY_SMALL EQU 100
 DELAY_BIG   EQU 4

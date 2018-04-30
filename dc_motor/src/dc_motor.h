@@ -1,3 +1,7 @@
+// dc_motor.h
+// Desenvolvido para a placa EK-TM4C1294XL
+// Marcelo Fernandes e Bruno Colombo
+
 #ifndef __MOTOR_INPUT_H__
 #define __MOTOR_INPUT_H__
 
