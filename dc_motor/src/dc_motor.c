@@ -30,37 +30,45 @@ void Motor_Process(int input)
     else if (input >= 1 && input <= 7)
     {
         smooth_speed = motor_speed;
-        motor_speed = 30 + (input*10);
+        motor_speed = 30 + (input * 10);
         Motor_DisplayRunning();
         return;
     }
     else if (input == '*')
     {
-        if(motor_old_direction == 0)
-            return;
-        smooth_speed = motor_speed;
-        smooth_swap = 1;
-
-        motor_old_direction = motor_direction;
+        if(smooth_mode)
+        {
+            smooth_speed = motor_speed;
+            smooth_swap = 1;
+            motor_old_direction = motor_direction;
+        }
+        
         motor_direction = 0;
+
         Motor_DisplayRunning();
+
         return;
     }
     else if (input == '#')
     {
-        if(motor_old_direction == 1)
-            return;
-        smooth_speed = motor_speed;
-        smooth_swap = 1;
+        if(smooth_mode) {
+            smooth_speed = motor_speed;
+            smooth_swap = 1;
 
-        motor_old_direction = motor_direction;
+            motor_old_direction = motor_direction;
+
+        }
+
         motor_direction = 1;
+
         Motor_DisplayRunning();
         return;
     }
     else if(input == 'A')
     {
         smooth_mode = !smooth_mode;
+        smooth_speed = motor_speed;
+        smooth_swap = 0;
         Motor_DisplayRunning();
     }
 }
