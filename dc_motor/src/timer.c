@@ -54,40 +54,6 @@ void Timer0A_Handler(void)
     if (++pwm_counter >= 10)
         pwm_counter = 0;
 
-    //Se está no modo smooth e se já passaram 40ms
-    if (smooth_mode && (++smooth_counter >= 200))
-    {
-        smooth_counter = 0;
-
-        //Se está fazedo uma transição suave, aproxima iterativamente o valor
-        //de smooth_speed a 0. Após isso, Aproxima a velocidade suave ao valor
-        //atual de velocidade.
-        if (smooth_swap && smooth_speed != 0)
-        {
-            smooth_speed -= 10;
-
-            if (smooth_speed <= 0)
-            {
-                smooth_swap = 0;
-                motor_old_direction = motor_direction;
-            }
-        }
-        else
-        {
-            if (smooth_speed - motor_speed > 0)
-                smooth_speed -= 10;
-            else if (smooth_speed - motor_speed < 0)
-                smooth_speed += 10;
-        }
-    }
-
-    //Coloca o bit PWM como 0 ou 1 dependendo se a contagem
-    //for maior do que a velocidade atual do motor desejada
-    if (smooth_mode)
-        pwm_bit = (pwm_counter >= (smooth_speed / 10));
-    else
-        pwm_bit = (pwm_counter >= (motor_speed / 10));
-
     //Aumenta contagem do contador de teclado (verificado na thread)
     keyboard_counter++;
 
