@@ -35,10 +35,12 @@ int main(void)
 
 	while(1) 
 	{
-		//Se passaram 250*200us = 50ms, faz polling do teclado
+		//Se passaram 500*200us = 100ms, faz polling do teclado
 		//e manda processar dado lido para o motor
-		if(keyboard_counter >= 250) 
+		if(keyboard_counter >= 500) {
 			Motor_Process(Keyboard_Poll());
+            keyboard_counter = 0;
+        }
 	}
 }
 
