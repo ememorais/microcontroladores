@@ -17,7 +17,7 @@ LAST_KEY EQU 0x20000100
             
         EXPORT LAST_KEY
                 
-keyboardArray = 1, 2, 3, 17,\
+keyboardArray = 1, 2, 3, 'A',\
                 4, 5, 6, 18,\
                 7, 8, 9, 19,\
                 '*', 0, '#', 20
