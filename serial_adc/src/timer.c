@@ -5,11 +5,12 @@ volatile uint32_t pwm_counter = 0;
 volatile uint8_t pwm_bit = 0;
 volatile uint32_t keyboard_counter = 0;
 volatile uint32_t smooth_counter = 0;
+volatile uint32_t transmission_counter = 0;
 
 // -----------------------------------------------------------------------------
-// Função Timer_Init
+// Funï¿½ï¿½o Timer_Init
 //--------------------------------
-// Inicializa Timer 0 no modo A (32 bits) e com interrupção a cada 200 us.
+// Inicializa Timer 0 no modo A (32 bits) e com interrupï¿½ï¿½o a cada 200 us.
 // -----------------------------------------------------------------------------
 void Timer_Init(void)
 {
@@ -48,5 +49,8 @@ void Timer_Init(void)
 // -----------------------------------------------------------------------------
 void Timer0A_Handler(void)
 {
-
+        TIMER0_ICR_R |= 0x01;
+        transmission_counter++;
+        Uart_Transmit();
+        
 }

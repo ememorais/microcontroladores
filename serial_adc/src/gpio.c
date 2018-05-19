@@ -22,7 +22,7 @@
 #define GPIO_PORT_M 0x0800
 #define GPIO_PORT_N 0x1000
 
-#define GPIO_PORTS (GPIO_PORT_D|GPIO_PORT_J|\
+#define GPIO_PORTS (GPIO_PORT_A|GPIO_PORT_D|GPIO_PORT_J|\
 					GPIO_PORT_K|GPIO_PORT_M|GPIO_PORT_N)
 
 #define GPIO_PORTD_KB_ROWS 		(*((volatile uint32_t *)0x4005B03C))
@@ -43,12 +43,13 @@ void GPIO_Init(void)
 	//1a. Ativar o clock para a porta setando o bit correspondente no registrador RCGCGPIO
 	SYSCTL_RCGCGPIO_R |= GPIO_PORTS;
 
-	//1b.   após isso verificar no PRGPIO se a porta está pronta para uso.
+	//1b. Após isso verificar no PRGPIO se a porta está pronta para uso.
   	while((SYSCTL_PRGPIO_R & (GPIO_PORTS) ) != (GPIO_PORTS) ){};
 	
 	// 2. Destravar a porta somente se for o pino PD7 e PE7
 		
 	// 3. Limpar o AMSEL para desabilitar a analógica
+	GPIO_PORTA_AHB_AMSEL_R  = 0x00;
 	GPIO_PORTD_AHB_AMSEL_R	= 0x00;
 	GPIO_PORTJ_AHB_AMSEL_R 	= 0x00;
 	GPIO_PORTK_AMSEL_R 		= 0x00;
@@ -56,7 +57,7 @@ void GPIO_Init(void)
 	GPIO_PORTN_AMSEL_R 		= 0x00;
 		
 	// 4. Limpar PCTL para selecionar o GPI
-	GPIO_PORTD_AHB_PCTL_R	= 0x00;
+	GPIO_PORTA_AHB_PCTL_R	= 0x11;
 	GPIO_PORTK_PCTL_R		= 0x00;
 	GPIO_PORTJ_AHB_PCTL_R 	= 0x00;
 	GPIO_PORTK_PCTL_R		= 0x00;
@@ -71,6 +72,7 @@ void GPIO_Init(void)
 	GPIO_PORTN_DIR_R 		= 0x03;
 		
 	// 6. Limpar os bits AFSEL para 0 para selecionar GPIO sem função alternativa
+	GPIO_PORTA_AHB_AFSEL_R	= 0x03;
 	GPIO_PORTD_AHB_AFSEL_R	= 0x00;
 	GPIO_PORTJ_AHB_AFSEL_R 	= 0x00;
 	GPIO_PORTK_AFSEL_R		= 0x00;
@@ -79,11 +81,13 @@ void GPIO_Init(void)
 
 		
 	// 7. Setar os bits de DEN para habilitar I/O digital
+	GPIO_PORTA_AHB_DEN_R	= 0x03;
 	GPIO_PORTD_AHB_DEN_R	= 0x0F;
 	GPIO_PORTJ_AHB_DEN_R 	= 0x03;
 	GPIO_PORTK_DEN_R		= 0xFF;
 	GPIO_PORTM_DEN_R		= 0x7F; 
 	GPIO_PORTN_DEN_R 		= 0x03;
+	
 
 	
 	// 8. Habilitar resistor de pull-up interno, setar PUR para 1

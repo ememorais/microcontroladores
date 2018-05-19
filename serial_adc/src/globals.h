@@ -18,6 +18,7 @@ extern volatile uint32_t    motor_old_direction;
 extern volatile uint32_t    timer_counter;
 extern volatile uint32_t    smooth_counter;
 extern volatile uint32_t    keyboard_counter;
+extern volatile uint32_t    transmission_counter;
 
 extern volatile uint8_t     smooth_mode;
 extern volatile int32_t     smooth_speed;

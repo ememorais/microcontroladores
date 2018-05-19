@@ -1,16 +1,16 @@
-// timer.h
+// uart.h
 // Desenvolvido para a placa EK-TM4C1294XL
 // Marcelo Fernandes e Bruno Colombo
 
-
-#ifndef __TIMER_H__
-#define __TIMER_H__
+#ifndef __UART_H__
+#define __UART_H__
 
 #include <stdint.h>
 #include "tm4c1294ncpdt.h"
-#include "globals.h"
-#include "uart.h"
 
-void Timer_Init(void);
+void Uart_Init(void);
+
+void Uart_Transmit(void);
+
 
 #endif

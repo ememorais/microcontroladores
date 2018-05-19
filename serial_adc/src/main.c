@@ -1,7 +1,7 @@
 // main.c
 // Desenvolvido para a placa EK-TM4C1294XL
-// Inicializa periféricos e faz um loop de polling 
-// e atualização do funcionamento do motor.
+// Inicializa perifï¿½ricos e faz um loop de polling 
+// e atualizaï¿½ï¿½o do funcionamento do motor.
 // Marcelo Fernandes e Bruno Colombo
 
 #include <stdint.h>
@@ -10,6 +10,7 @@
 #include "utils.h"
 #include "keyboard.h"
 #include "timer.h"
+#include "uart.h"
 
 void PLL_Init(void);
 void SysTick_Init(void);
@@ -18,6 +19,7 @@ uint32_t PortJ_Input(void);
 void PortN_Output(uint32_t leds);
 
 
+volatile int x = 0;
 
 int main(void)
 {
@@ -27,15 +29,6 @@ int main(void)
     LCD_Init();
 	Keyboard_Init();
     Timer_Init();
-    
-
-	while(1) 
-	{
-		//Se passaram 500*200us = 100ms, faz polling do teclado
-		//e manda processar dado lido para o motor
-		if(keyboard_counter >= 500) {
-            keyboard_counter = 0;
-        }
-	}
+    Uart_Init();
 }
 

@@ -1,7 +1,7 @@
 %clear all;
 close all;
 
-s = serial('COM7');
+s = serial('COM3');
 set(s, 'InputBufferSize', 100);
 set(s, 'FlowControl', 'hardware');
 set(s, 'BaudRate', 9600);
@@ -27,7 +27,7 @@ disp('Running');
 
 x = 0;
 
-while(t < 2000)
+while(t < 100)
     a = fread(s);
     a = max(a);
 
@@ -50,4 +50,4 @@ while(t < 2000)
     drawnow;
 end
 
-fclose(a);
+fclose(s);
