@@ -4,7 +4,6 @@
 
 #include "uart.h"
 
-volatile uint8_t value = 36;
 
 void Uart_Init(void)
 {
@@ -33,6 +32,6 @@ void Uart_Init(void)
 void Uart_Transmit(void)
 {
     if((UART0_FR_R & UART_FR_TXFF) == 0) {
-        UART0_DR_R |= value;
+        UART0_DR_R |= Exec_ADC();
     }
 }

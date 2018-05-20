@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 #include "tm4c1294ncpdt.h"
+#include "adc.h"
 
 void Uart_Init(void);
 
